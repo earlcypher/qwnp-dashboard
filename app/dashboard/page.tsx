@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { listApiKeys, createApiKey, updateApiKey, deleteApiKey, getStats, getUsageAnalytics, type ApiKey, type StatsResponse, type UsageStats } from '@/lib/api';
-import { UsageChart } from '@/components/UsageChart';
-import { TopKeysChart } from '@/components/TopKeysChart';
+import UsageChart from '@/components/UsageChart';
+import TopKeysChart from '@/components/TopKeysChart';
 
 export default function DashboardPage() {
   const [adminKey, setAdminKey] = useState('');
