@@ -64,7 +64,7 @@ export default function DashboardPage() {
       const [keysResponse, statsResponse, analyticsResponse] = await Promise.all([
         listApiKeys(key, false),
         getStats(key),
-        getUsageAnalytics(key, 30).catch(() => ({ data: null })), // Graceful fallback if analytics not available
+        getUsageAnalytics(key, { days: 30 }).catch(() => ({ data: null })), // Graceful fallback if analytics not available
       ]);
       setKeys(keysResponse.data);
       setFilteredKeys(keysResponse.data);
@@ -221,7 +221,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div className="card p-6">
               <h3 className="text-lg font-medium text-gray-100 mb-4">Usage Over Time</h3>
-              <UsageChart data={analytics.by_day} />
+              <UsageChart data={analytics.requests_by_day} />
             </div>
             <div className="card p-6">
               <h3 className="text-lg font-medium text-gray-100 mb-4">Top API Keys</h3>
