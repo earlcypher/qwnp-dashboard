@@ -308,7 +308,8 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
   const tokenExp = getTokenExpiration();
 
   return (
-    <div className="card">
+    <>
+      <div className="card">
       <div className="px-6 py-4 border-b border-[#333]">
         <div className="flex justify-between items-center">
           <div>
@@ -575,11 +576,12 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
           </div>
         )}
       </div>
-    </div>
+      </div>
 
-    {/* Cookie Guide Modal */}
-    {showCookieGuide && (
-      <CookieGuide onClose={() => setShowCookieGuide(false)} />
-    )}
+      {/* Cookie Guide Modal */}
+      {showCookieGuide && (
+        <CookieGuide onClose={() => setShowCookieGuide(false)} />
+      )}
+    </>
   );
 }
