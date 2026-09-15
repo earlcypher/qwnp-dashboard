@@ -81,26 +81,42 @@ function parseCookiesTxt(content: string): { token?: string; bxUmidtoken?: strin
 // Parse full cookie string (from DevTools) to extract values
 function parseFullCookieString(cookieString: string): { token?: string; bxUmidtoken?: string } {
   const result: { token?: string; bxUmidtoken?: string } = {};
+  const input = cookieString.trim();
 
-  // Strip "Cookie: " or "cookie: " prefix if present
-  let cleanedString = cookieString.trim();
-  if (cleanedString.toLowerCase().startsWith('cookie:')) {
-    cleanedString = cleanedString.substring(7).trim();
+  // Format 1: Multi-line table from Cookies tab (tab/space separated columns)
+  // Example: "token    eyJhbGc...    .qwen.ai    /    2026-10-15..."
+  if (input.includes('\n') && !input.includes('Cookie:')) {
+    const lines = input.split('\n').filter(l => l.trim());
+    for (const line of lines) {
+      // Split by multiple spaces/tabs
+      const parts = line.split(/\s{2,}|\t+/);
+      if (parts.length >= 2) {
+        const name = parts[0].trim();
+        const value = parts[1].trim();
+        if (name === 'token' && value) result.token = value;
+        if (name === 'bx-umidtoken' && value) result.bxUmidtoken = value;
+      }
+    }
+    return result;
   }
 
-  // Split by semicolons and process each cookie
-  const cookies = cleanedString.split(';').map(c => c.trim());
+  // Format 2: Full HTTP headers - extract Cookie: line
+  if (input.includes('Cookie:')) {
+    const cookieLine = input.split('\n').find(l => l.trim().toLowerCase().startsWith('cookie:'));
+    if (cookieLine) {
+      const cookieValue = cookieLine.substring(cookieLine.indexOf(':') + 1).trim();
+      return parseFullCookieString(cookieValue); // Recurse with extracted value
+    }
+    return result;
+  }
 
+  // Format 3: Raw cookie string "token=xxx; bx-umidtoken=yyy"
+  const cookies = input.split(';').map(c => c.trim());
   for (const cookie of cookies) {
     const [name, ...valueParts] = cookie.split('=');
     const value = valueParts.join('=').trim();
-
-    if (name.trim() === 'token' && value) {
-      result.token = value;
-    }
-    if (name.trim() === 'bx-umidtoken' && value) {
-      result.bxUmidtoken = value;
-    }
+    if (name.trim() === 'token' && value) result.token = value;
+    if (name.trim() === 'bx-umidtoken' && value) result.bxUmidtoken = value;
   }
 
   return result;
