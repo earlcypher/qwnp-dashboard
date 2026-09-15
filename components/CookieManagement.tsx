@@ -202,16 +202,36 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
     setError('');
     setSuccess('');
     try {
+      // Validate required fields before testing
+      if (!token.trim()) {
+        throw new Error('Token is required for testing');
+      }
+      if (!bxUa.trim()) {
+        throw new Error('bx-ua header is required for testing');
+      }
+
+      // Build test payload with current form values
+      const cookiesContent = buildCookiesTxt(token.trim(), undefined, bxUmidtoken.trim());
+      const headersPayload = {
+        bxUa: bxUa.trim(),
+        bxUmidtoken: bxUmidtoken.trim() || undefined
+      };
+
       const response = await fetch(`${apiUrl}/admin/cookies/test`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${adminKey}`,
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          cookies: cookiesContent,
+          headers: headersPayload
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to test connection');
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to test connection');
       }
 
       const result = await response.json();
