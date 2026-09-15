@@ -333,31 +333,41 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
     try {
       // Parse cookies
       const parsedCookies = parseFullCookieString(fullCookieString);
+      console.log('🔍 Parsed Cookies:', parsedCookies);
 
       // Parse headers
       const parsedHeaders = parseFullHeaders(fullHeaders);
+      console.log('🔍 Parsed Headers:', parsedHeaders);
 
       // Auto-fill fields
       if (parsedCookies.token) {
+        console.log('✅ Setting token:', parsedCookies.token.substring(0, 50) + '...');
         setToken(parsedCookies.token);
+      } else {
+        console.log('❌ No token found in cookies');
       }
 
       if (parsedCookies.bxUmidtoken) {
+        console.log('✅ Setting bx-umidtoken from cookies');
         setBxUmidtoken(parsedCookies.bxUmidtoken);
       }
 
       if (parsedHeaders.bxUa) {
+        console.log('✅ Setting bx-ua from headers');
         setBxUa(parsedHeaders.bxUa);
+      } else {
+        console.log('❌ No bx-ua found in headers');
       }
 
       if (parsedHeaders.bxUmidtoken && !parsedCookies.bxUmidtoken) {
+        console.log('✅ Setting bx-umidtoken from headers');
         setBxUmidtoken(parsedHeaders.bxUmidtoken);
       }
 
       // Check what was found
       const found = [];
-      if (parsedCookies.token) found.push('token');
-      if (parsedHeaders.bxUa) found.push('bx-ua');
+      if (parsedCookies.token) found.push(`token (${parsedCookies.token.length} chars)`);
+      if (parsedHeaders.bxUa) found.push(`bx-ua (${parsedHeaders.bxUa.length} chars)`);
       if (parsedCookies.bxUmidtoken || parsedHeaders.bxUmidtoken) found.push('bx-umidtoken');
 
       if (found.length > 0) {
