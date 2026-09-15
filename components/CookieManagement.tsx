@@ -82,8 +82,14 @@ function parseCookiesTxt(content: string): { token?: string; bxUmidtoken?: strin
 function parseFullCookieString(cookieString: string): { token?: string; bxUmidtoken?: string } {
   const result: { token?: string; bxUmidtoken?: string } = {};
 
+  // Strip "Cookie: " or "cookie: " prefix if present
+  let cleanedString = cookieString.trim();
+  if (cleanedString.toLowerCase().startsWith('cookie:')) {
+    cleanedString = cleanedString.substring(7).trim();
+  }
+
   // Split by semicolons and process each cookie
-  const cookies = cookieString.split(';').map(c => c.trim());
+  const cookies = cleanedString.split(';').map(c => c.trim());
 
   for (const cookie of cookies) {
     const [name, ...valueParts] = cookie.split('=');
