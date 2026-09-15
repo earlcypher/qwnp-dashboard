@@ -7,6 +7,10 @@ import UsageChart from '@/components/UsageChart';
 import TopKeysChart from '@/components/TopKeysChart';
 import KeyDetailsModal from '@/components/KeyDetailsModal';
 import CookieManagement from '@/components/CookieManagement';
+import PlaygroundModal from '@/components/PlaygroundModal';
+import DocsModal from '@/components/DocsModal';
+import TiersModal from '@/components/TiersModal';
+import LogsModal from '@/components/LogsModal';
 
 export default function DashboardPage() {
   const [adminKey, setAdminKey] = useState('');
@@ -26,6 +30,10 @@ export default function DashboardPage() {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [refreshInterval, setRefreshInterval] = useState(30);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [showPlaygroundModal, setShowPlaygroundModal] = useState(false);
+  const [showDocsModal, setShowDocsModal] = useState(false);
+  const [showTiersModal, setShowTiersModal] = useState(false);
+  const [showLogsModal, setShowLogsModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -172,25 +180,25 @@ export default function DashboardPage() {
             <h1 className="text-2xl font-bold text-gray-100">Qwen Proxy Dashboard</h1>
             <div className="flex space-x-3">
               <button
-                onClick={() => router.push('/playground')}
+                onClick={() => setShowPlaygroundModal(true)}
                 className="px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"
               >
                 🎮 Playground
               </button>
               <button
-                onClick={() => router.push('/docs')}
+                onClick={() => setShowDocsModal(true)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
               >
                 📖 API Docs
               </button>
               <button
-                onClick={() => router.push('/tiers')}
+                onClick={() => setShowTiersModal(true)}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
               >
                 🏆 Tiers
               </button>
               <button
-                onClick={() => router.push('/logs')}
+                onClick={() => setShowLogsModal(true)}
                 className="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 transition-colors"
               >
                 📊 Logs
@@ -503,6 +511,36 @@ export default function DashboardPage() {
             loadData(adminKey);
             setSelectedKey(null);
           }}
+        />
+      )}
+
+      {/* Playground Modal */}
+      {showPlaygroundModal && (
+        <PlaygroundModal
+          adminKey={adminKey}
+          onClose={() => setShowPlaygroundModal(false)}
+        />
+      )}
+
+      {/* API Docs Modal */}
+      {showDocsModal && (
+        <DocsModal onClose={() => setShowDocsModal(false)} />
+      )}
+
+      {/* Tiers Modal */}
+      {showTiersModal && (
+        <TiersModal
+          adminKey={adminKey}
+          onClose={() => setShowTiersModal(false)}
+          onUpdate={() => loadData(adminKey)}
+        />
+      )}
+
+      {/* Logs Modal */}
+      {showLogsModal && (
+        <LogsModal
+          adminKey={adminKey}
+          onClose={() => setShowLogsModal(false)}
         />
       )}
     </div>
