@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { listApiKeys, createApiKey, updateApiKey, deleteApiKey, getStats, getUsageAnalytics, type ApiKey, type StatsResponse, type UsageStats } from '@/lib/api';
 import UsageChart from '@/components/UsageChart';
 import TopKeysChart from '@/components/TopKeysChart';
+import KeyDetailsModal from '@/components/KeyDetailsModal';
+import CookieManagement from '@/components/CookieManagement';
 
 export default function DashboardPage() {
   const [adminKey, setAdminKey] = useState('');
@@ -20,6 +22,10 @@ export default function DashboardPage() {
   const [newKeyTier, setNewKeyTier] = useState<'free' | 'premium' | 'enterprise'>('free');
   const [createdKey, setCreatedKey] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedKey, setSelectedKey] = useState<ApiKey | null>(null);
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [refreshInterval, setRefreshInterval] = useState(30);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -43,6 +49,17 @@ export default function DashboardPage() {
       setFilteredKeys(keys);
     }
   }, [searchQuery, keys]);
+
+  // Auto-refresh effect
+  useEffect(() => {
+    if (!autoRefresh || !adminKey) return;
+
+    const interval = setInterval(() => {
+      loadData(adminKey);
+    }, refreshInterval * 1000);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, adminKey]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -70,6 +87,7 @@ export default function DashboardPage() {
       setFilteredKeys(keysResponse.data);
       setStats(statsResponse.data);
       setAnalytics(analyticsResponse.data);
+      setLastUpdated(new Date());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load data');
       if (err instanceof Error && err.message.includes('Invalid')) {
@@ -150,21 +168,39 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="card p-6 mb-6">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-gray-100">Qwen Proxy Dashboard</h1>
             <div className="flex space-x-3">
               <button
-                onClick={() => router.push('/logs')}
+                onClick={() => router.push('/playground')}
+                className="px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"
+              >
+                🎮 Playground
+              </button>
+              <button
+                onClick={() => router.push('/docs')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
+              >
+                📖 API Docs
+              </button>
+              <button
+                onClick={() => router.push('/tiers')}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
               >
-                📊 View Logs
+                🏆 Tiers
+              </button>
+              <button
+                onClick={() => router.push('/logs')}
+                className="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 transition-colors"
+              >
+                📊 Logs
               </button>
               <button
                 onClick={() => loadData(adminKey)}
                 className="px-4 py-2 border border-[#333] text-gray-300 rounded-md text-sm font-medium hover:bg-[#252525] transition-colors"
                 title="Refresh data"
               >
-                ↻ Refresh
+                ↻
               </button>
               <button
                 onClick={handleLogout}
@@ -173,6 +209,38 @@ export default function DashboardPage() {
                 Logout
               </button>
             </div>
+          </div>
+
+          {/* Auto-refresh controls */}
+          <div className="flex items-center gap-4 pt-4 border-t border-[#333]">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="autoRefresh"
+                checked={autoRefresh}
+                onChange={(e) => setAutoRefresh(e.target.checked)}
+                className="w-4 h-4 text-indigo-600 bg-[#1a1a1a] border-[#333] rounded focus:ring-indigo-500"
+              />
+              <label htmlFor="autoRefresh" className="text-sm text-gray-300">
+                Auto-refresh
+              </label>
+            </div>
+            {autoRefresh && (
+              <select
+                value={refreshInterval}
+                onChange={(e) => setRefreshInterval(parseInt(e.target.value))}
+                className="px-3 py-1 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="30">Every 30s</option>
+                <option value="60">Every 1m</option>
+                <option value="300">Every 5m</option>
+              </select>
+            )}
+            {lastUpdated && (
+              <span className="text-xs text-gray-500 ml-auto">
+                Last updated: {lastUpdated.toLocaleTimeString()}
+              </span>
+            )}
           </div>
         </div>
 
@@ -230,6 +298,11 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* Cookie Management */}
+        <div className="mb-6">
+          <CookieManagement adminKey={adminKey} apiUrl={process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'} />
+        </div>
+
         {/* API Keys List */}
         <div className="card">
           <div className="px-6 py-4 border-b border-[#333] flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
@@ -281,7 +354,11 @@ export default function DashboardPage() {
                 </thead>
                 <tbody className="divide-y divide-[#333]">
                   {filteredKeys.map((key) => (
-                    <tr key={key.id} className="hover:bg-[#151515] transition-colors">
+                    <tr
+                      key={key.id}
+                      className="hover:bg-[#151515] transition-colors cursor-pointer"
+                      onClick={() => setSelectedKey(key)}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">{key.name}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`badge ${
@@ -306,13 +383,19 @@ export default function DashboardPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex flex-col sm:flex-row sm:space-x-3 space-y-2 sm:space-y-0">
                           <button
-                            onClick={() => handleToggleActive(key.id, key.is_active)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleActive(key.id, key.is_active);
+                            }}
                             className="text-indigo-400 hover:text-indigo-300 transition-colors text-left"
                           >
                             {key.is_active ? 'Deactivate' : 'Activate'}
                           </button>
                           <button
-                            onClick={() => handleDeleteKey(key.id, key.name)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteKey(key.id, key.name);
+                            }}
                             className="text-red-400 hover:text-red-300 transition-colors text-left"
                           >
                             Delete
@@ -408,6 +491,19 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Key Details Modal */}
+      {selectedKey && (
+        <KeyDetailsModal
+          apiKey={selectedKey}
+          adminKey={adminKey}
+          onClose={() => setSelectedKey(null)}
+          onUpdate={() => {
+            loadData(adminKey);
+            setSelectedKey(null);
+          }}
+        />
       )}
     </div>
   );
