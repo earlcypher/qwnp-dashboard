@@ -33,9 +33,11 @@ export default function PlaygroundPage() {
 
   const models = [
     { id: 'qwen3.7-plus', name: 'Qwen 3.7 Plus' },
-    { id: 'qwen-max', name: 'Qwen Max' },
-    { id: 'qwen-turbo', name: 'Qwen Turbo' },
-    { id: 'qwen-plus', name: 'Qwen Plus' },
+    { id: 'qwen3.8-max', name: 'Qwen 3.8 Max' },
+    { id: 'qwen3.7-max', name: 'Qwen 3.7 Max' },
+    { id: 'qwen3.6-plus', name: 'Qwen 3.6 Plus' },
+    { id: 'qwen3.5-plus', name: 'Qwen 3.5 Plus' },
+    { id: 'qwen3.5-omni-plus', name: 'Qwen 3.5 Omni Plus' },
   ];
 
   const addMessage = (role: 'user' | 'assistant') => {
