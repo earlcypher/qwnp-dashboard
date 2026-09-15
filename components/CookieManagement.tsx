@@ -78,6 +78,52 @@ function parseCookiesTxt(content: string): { token?: string; bxUmidtoken?: strin
   return result;
 }
 
+// Parse full cookie string (from DevTools) to extract values
+function parseFullCookieString(cookieString: string): { token?: string; bxUmidtoken?: string } {
+  const result: { token?: string; bxUmidtoken?: string } = {};
+
+  // Split by semicolons and process each cookie
+  const cookies = cookieString.split(';').map(c => c.trim());
+
+  for (const cookie of cookies) {
+    const [name, ...valueParts] = cookie.split('=');
+    const value = valueParts.join('=').trim();
+
+    if (name.trim() === 'token' && value) {
+      result.token = value;
+    }
+    if (name.trim() === 'bx-umidtoken' && value) {
+      result.bxUmidtoken = value;
+    }
+  }
+
+  return result;
+}
+
+// Parse full headers string to extract bx-ua and bx-umidtoken
+function parseFullHeaders(headersString: string): { bxUa?: string; bxUmidtoken?: string } {
+  const result: { bxUa?: string; bxUmidtoken?: string } = {};
+
+  const lines = headersString.split('\n').map(l => l.trim()).filter(l => l);
+
+  for (const line of lines) {
+    const colonIndex = line.indexOf(':');
+    if (colonIndex === -1) continue;
+
+    const name = line.substring(0, colonIndex).trim().toLowerCase();
+    const value = line.substring(colonIndex + 1).trim();
+
+    if (name === 'bx-ua' && value) {
+      result.bxUa = value;
+    }
+    if (name === 'bx-umidtoken' && value) {
+      result.bxUmidtoken = value;
+    }
+  }
+
+  return result;
+}
+
 export default function CookieManagement({ adminKey, apiUrl }: CookieManagementProps) {
   const [status, setStatus] = useState<CookieStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -91,10 +137,15 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
   const [bxUa, setBxUa] = useState('');
   const [bxUmidtoken, setBxUmidtoken] = useState('');
 
+  // Full paste fields
+  const [fullCookieString, setFullCookieString] = useState('');
+  const [fullHeaders, setFullHeaders] = useState('');
+
   // UI state
   const [showManualInput, setShowManualInput] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [showCookieGuide, setShowCookieGuide] = useState(false);
+  const [showQuickPaste, setShowQuickPaste] = useState(false);
 
   useEffect(() => {
     loadStatus();
@@ -275,6 +326,52 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
     reader.readAsText(file);
   };
 
+  const handleQuickParse = () => {
+    setError('');
+    setSuccess('');
+
+    try {
+      // Parse cookies
+      const parsedCookies = parseFullCookieString(fullCookieString);
+
+      // Parse headers
+      const parsedHeaders = parseFullHeaders(fullHeaders);
+
+      // Auto-fill fields
+      if (parsedCookies.token) {
+        setToken(parsedCookies.token);
+      }
+
+      if (parsedCookies.bxUmidtoken) {
+        setBxUmidtoken(parsedCookies.bxUmidtoken);
+      }
+
+      if (parsedHeaders.bxUa) {
+        setBxUa(parsedHeaders.bxUa);
+      }
+
+      if (parsedHeaders.bxUmidtoken && !parsedCookies.bxUmidtoken) {
+        setBxUmidtoken(parsedHeaders.bxUmidtoken);
+      }
+
+      // Check what was found
+      const found = [];
+      if (parsedCookies.token) found.push('token');
+      if (parsedHeaders.bxUa) found.push('bx-ua');
+      if (parsedCookies.bxUmidtoken || parsedHeaders.bxUmidtoken) found.push('bx-umidtoken');
+
+      if (found.length > 0) {
+        setSuccess(`✓ Parsed and filled: ${found.join(', ')}`);
+        setShowQuickPaste(false);
+        setShowManualInput(true);
+      } else {
+        setError('No valid credentials found in pasted content. Please check the format.');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to parse credentials');
+    }
+  };
+
   const formatDate = (timestamp: number) => {
     return new Date(timestamp * 1000).toLocaleString();
   };
@@ -436,8 +533,19 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
         <div className="flex gap-3">
           <button
             onClick={() => {
+              setShowQuickPaste(!showQuickPaste);
+              setShowManualInput(false);
+              setShowFileUpload(false);
+            }}
+            className="px-4 py-2 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 transition-colors"
+          >
+            {showQuickPaste ? 'Hide Quick Paste' : '⚡ Quick Paste'}
+          </button>
+          <button
+            onClick={() => {
               setShowManualInput(!showManualInput);
               setShowFileUpload(false);
+              setShowQuickPaste(false);
             }}
             className="px-4 py-2 bg-indigo-600 text-white rounded text-sm font-medium hover:bg-indigo-700 transition-colors"
           >
@@ -447,12 +555,87 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
             onClick={() => {
               setShowFileUpload(!showFileUpload);
               setShowManualInput(false);
+              setShowQuickPaste(false);
             }}
             className="px-4 py-2 border border-[#333] text-gray-300 rounded text-sm font-medium hover:bg-[#252525] transition-colors"
           >
             {showFileUpload ? 'Cancel Upload' : '📤 Upload cookies.txt'}
           </button>
         </div>
+
+        {/* Quick Paste Form */}
+        {showQuickPaste && (
+          <div className="bg-[#0a0a0a] p-6 rounded border border-green-800 space-y-4">
+            <div className="mb-4">
+              <h3 className="text-md font-medium text-gray-100 mb-2">⚡ Quick Paste</h3>
+              <p className="text-sm text-gray-400">
+                Copy cookies and headers directly from DevTools and paste below. We'll extract the values automatically.
+              </p>
+            </div>
+
+            {/* Full Cookie String */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Full Cookie String
+              </label>
+              <textarea
+                value={fullCookieString}
+                onChange={(e) => setFullCookieString(e.target.value)}
+                placeholder="token=eyJhbGc...; bx-umidtoken=xxx; other=values..."
+                rows={4}
+                className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                📋 Copy from DevTools → Network tab → Request Headers → Cookie
+              </p>
+            </div>
+
+            {/* Full Headers */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Full Headers (Optional)
+              </label>
+              <textarea
+                value={fullHeaders}
+                onChange={(e) => setFullHeaders(e.target.value)}
+                placeholder="bx-ua: 234!5Rve...&#10;bx-umidtoken: xxx...&#10;user-agent: Mozilla/5.0..."
+                rows={6}
+                className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                📋 Copy from DevTools → Network tab → Request Headers (entire section)
+              </p>
+            </div>
+
+            {/* Parse Button */}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={handleQuickParse}
+                disabled={!fullCookieString.trim() && !fullHeaders.trim()}
+                className="px-6 py-2 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                ⚡ Parse & Fill Fields
+              </button>
+              <button
+                onClick={() => {
+                  setFullCookieString('');
+                  setFullHeaders('');
+                }}
+                className="px-4 py-2 border border-[#333] text-gray-300 rounded text-sm font-medium hover:bg-[#252525] transition-colors"
+              >
+                Clear
+              </button>
+            </div>
+
+            {/* Help Text */}
+            <div className="bg-blue-900/20 border border-blue-800 rounded p-3">
+              <p className="text-xs text-blue-300">
+                💡 <strong>Tip:</strong> Paste the full cookie string and/or headers, then click "Parse & Fill".
+                The individual fields below will be automatically populated. After that, click "Save Credentials" to apply.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Manual Input Form */}
         {showManualInput && (
