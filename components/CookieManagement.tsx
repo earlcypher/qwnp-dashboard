@@ -581,5 +581,5 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
     {showCookieGuide && (
       <CookieGuide onClose={() => setShowCookieGuide(false)} />
     )}
-  </>;
+  );
 }
