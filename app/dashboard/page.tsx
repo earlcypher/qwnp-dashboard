@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { listApiKeys, createApiKey, updateApiKey, deleteApiKey, getStats, getUsageAnalytics, type ApiKey, type StatsResponse, type UsageStats } from '@/lib/api';
+import { listApiKeys, createApiKey, updateApiKey, deleteApiKey, getStats, getUsageAnalytics, ApiError, type ApiKey, type StatsResponse, type UsageStats } from '@/lib/api';
 import UsageChart from '@/components/UsageChart';
 import TopKeysChart from '@/components/TopKeysChart';
 import KeyDetailsModal from '@/components/KeyDetailsModal';
@@ -37,7 +37,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const savedKey = localStorage.getItem('adminKey');
+    const savedKey = sessionStorage.getItem('adminKey');
     if (!savedKey) {
       router.push('/');
       return;
@@ -98,8 +98,8 @@ export default function DashboardPage() {
       setLastUpdated(new Date());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load data');
-      if (err instanceof Error && err.message.includes('Invalid')) {
-        localStorage.removeItem('adminKey');
+      if (err instanceof ApiError && err.status === 401) {
+        sessionStorage.removeItem('adminKey');
         router.push('/');
       }
     } finally {
@@ -108,7 +108,7 @@ export default function DashboardPage() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('adminKey');
+    sessionStorage.removeItem('adminKey');
     router.push('/');
   };
 

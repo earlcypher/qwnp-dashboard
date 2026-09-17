@@ -14,7 +14,7 @@ export default function LogsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const savedKey = localStorage.getItem('adminKey');
+    const savedKey = sessionStorage.getItem('adminKey');
     if (!savedKey) {
       router.push('/');
       return;

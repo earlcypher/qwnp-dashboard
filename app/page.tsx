@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   // Check if already logged in
   useEffect(() => {
-    const savedKey = localStorage.getItem('adminKey');
+    const savedKey = sessionStorage.getItem('adminKey');
     if (savedKey) {
       router.push('/dashboard');
     }
@@ -48,8 +48,8 @@ export default function LoginPage() {
         return;
       }
 
-      // Save to localStorage and redirect
-      localStorage.setItem('adminKey', adminKey);
+      // Save to sessionStorage and redirect
+      sessionStorage.setItem('adminKey', adminKey);
       router.push('/dashboard');
     } catch (err) {
       setError('Network error. Please check your connection and try again.');

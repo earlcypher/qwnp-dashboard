@@ -5,6 +5,13 @@
 // API base URL - configurable via environment variable
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
+export class ApiError extends Error {
+  constructor(message: string, public status: number) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 export interface ApiKey {
   id: string;
   key?: string; // Only present on creation
@@ -37,7 +44,7 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
-export interface ApiError {
+interface ApiErrorResponse {
   error: {
     message: string;
     type: string;
@@ -66,8 +73,8 @@ export async function listApiKeys(
   });
 
   if (!response.ok) {
-    const error: ApiError = await response.json();
-    throw new Error(error.error.message || 'Failed to list API keys');
+    const error: ApiErrorResponse = await response.json().catch(() => ({ error: { message: 'Request failed' } }));
+    throw new ApiError(error.error?.message || 'Failed to list API keys', response.status);
   }
 
   return response.json();
