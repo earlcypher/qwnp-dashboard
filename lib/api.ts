@@ -98,7 +98,7 @@ export async function createApiKey(
   });
 
   if (!response.ok) {
-    const error: ApiError = await response.json();
+    const error: ApiErrorResponse = await response.json();
     throw new Error(error.error.message || 'Failed to create API key');
   }
 
@@ -127,7 +127,7 @@ export async function updateApiKey(
   });
 
   if (!response.ok) {
-    const error: ApiError = await response.json();
+    const error: ApiErrorResponse = await response.json();
     throw new Error(error.error.message || 'Failed to update API key');
   }
 
@@ -150,7 +150,7 @@ export async function deleteApiKey(
   });
 
   if (!response.ok) {
-    const error: ApiError = await response.json();
+    const error: ApiErrorResponse = await response.json();
     throw new Error(error.error.message || 'Failed to delete API key');
   }
 
@@ -170,7 +170,7 @@ export async function getStats(adminKey: string): Promise<StatsResponse> {
   });
 
   if (!response.ok) {
-    const error: ApiError = await response.json();
+    const error: ApiErrorResponse = await response.json();
     throw new Error(error.error.message || 'Failed to get statistics');
   }
 
@@ -263,7 +263,7 @@ export async function getRequestLogs(
   });
 
   if (!response.ok) {
-    const error: ApiError = await response.json();
+    const error: ApiErrorResponse = await response.json();
     throw new Error(error.error.message || 'Failed to fetch request logs');
   }
 
@@ -294,7 +294,7 @@ export async function getUsageAnalytics(
   });
 
   if (!response.ok) {
-    const error: ApiError = await response.json();
+    const error: ApiErrorResponse = await response.json();
     throw new Error(error.error.message || 'Failed to fetch usage analytics');
   }
 
@@ -317,7 +317,7 @@ export async function getKeyAnalytics(
   });
 
   if (!response.ok) {
-    const error: ApiError = await response.json();
+    const error: ApiErrorResponse = await response.json();
     throw new Error(error.error.message || 'Failed to fetch key analytics');
   }
 
