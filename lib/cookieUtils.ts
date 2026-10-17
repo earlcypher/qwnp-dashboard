@@ -142,7 +142,8 @@ export function normalizeCookiePaste(content: string): string {
       const expires = cols[i + 4].trim();
       if ((domain.startsWith('.') || /^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i.test(domain)) &&
           cols[i + 3].trim().startsWith('/') && (/^\d{4}-\d{2}-\d{2}/.test(expires) || /^session$/i.test(expires))) {
-        addPair(cols[i], cols[i + 1]); foundBrowserRows = true;
+        const cookieName = cols[i].trim().split(/\s+/).pop() || cols[i];
+        addPair(cookieName, cols[i + 1]); foundBrowserRows = true;
       }
     }
     if (foundBrowserRows) continue;
