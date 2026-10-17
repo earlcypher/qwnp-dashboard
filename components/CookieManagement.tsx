@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import CookieGuide from './CookieGuide';
-import { parseJWT, buildCookiesTxt, parseCookiesTxt, parseFullCookieString, parseFullHeaders, normalizeCookiePaste, getCookieExportNames } from '../lib/cookieUtils';
+import { parseJWT, buildCookiesTxt, parseCookiesTxt, parseFullCookieString, parseFullHeaders, normalizeCookiePaste, getCookieExportNames, canSaveCredentials } from '../lib/cookieUtils';
 
 interface CookieStatus {
   source: 'environment' | 'file' | 'runtime';
@@ -564,16 +564,16 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
         {showManualInput && (
           <div className="bg-[#0a0a0a] p-6 rounded border border-indigo-800 space-y-4">
             <div className="mb-4">
-              <h3 className="text-md font-medium text-gray-100 mb-2">Required Credentials</h3>
+              <h3 className="text-md font-medium text-gray-100 mb-2">Cookie Credentials</h3>
               <p className="text-sm text-gray-400">
-                Enter the minimum required credentials. See QUICK-START.md for capture instructions.
+                Paste a full cookie export or enter a token. Fingerprint headers are optional; if omitted, existing configured headers are retained.
               </p>
             </div>
 
             {/* Token Field */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Token (JWT) <span className="text-red-400">*</span>
+                Token (JWT) <span className="text-gray-500">{fullCookieString.trim() ? ("(included in full paste if available)") : "*"}</span>
               </label>
               <input
                 type="text"
@@ -596,7 +596,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
             {/* bx-ua Field */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                bx-ua (Anti-bot Header) <span className="text-red-400">*</span>
+                bx-ua (Anti-bot Header) <span className="text-gray-500">(Optional)</span>
               </label>
               <textarea
                 value={bxUa}
@@ -611,7 +611,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
                 </div>
               )}
               <p className="text-xs text-gray-500 mt-1">
-                Required for bypassing Qwen's anti-bot protection (captured from request headers)
+                Optional fingerprint header. Existing saved value is preserved when this is blank; Qwen may require a fresh value if upstream authentication fails.
               </p>
             </div>
 
@@ -636,7 +636,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
             <div className="flex gap-3 pt-2">
               <button
                 onClick={handleSaveCookies}
-                disabled={uploading || !token.trim() || !bxUa.trim()}
+                disabled={!canSaveCredentials(fullCookieString, token, uploading)}
                 className="px-6 py-2 bg-indigo-600 text-white rounded text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
               >
                 {uploading ? 'Saving...' : '💾 Save Credentials'}
