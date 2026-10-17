@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0a;
+  --background: #0b1020;
   --foreground: #ededed;
-  --card: #1a1a1a;
+  --card: #111a2c;
   --card-hover: #252525;
-  --border: #333333;
-  --input: #1a1a1a;
+  --border: #27334a;
+  --input: #111a2c;
   --primary: #6366f1;
   --primary-hover: #4f46e5;
   --success: #10b981;
@@ -18,7 +18,7 @@
 
 body {
   color: var(--foreground);
-  background: var(--background);
+  background: radial-gradient(ellipse at 12% -12%, rgba(79,70,229,.16), transparent 42%), var(--background);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
 }
 
@@ -30,15 +30,15 @@ body {
 
 @layer components {
   .card {
-    @apply bg-[#1a1a1a] border border-[#333] rounded-lg shadow-lg;
+    @apply bg-[#111a2c]/90 border border-[#27334a] rounded-2xl shadow-xl shadow-black/20 backdrop-blur-sm;
   }
 
   .card-hover:hover {
-    @apply bg-[#252525] border-[#444];
+    @apply bg-[#17233a] border-[#435579] -translate-y-0.5;
   }
 
   .btn-primary {
-    @apply bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md transition-colors;
+    @apply bg-indigo-500 hover:bg-indigo-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-indigo-950/40;
   }
 
   .btn-secondary {
@@ -46,7 +46,7 @@ body {
   }
 
   .input-field {
-    @apply bg-[#1a1a1a] border border-[#333] text-gray-100 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+    @apply bg-[#0c1424] border border-[#27334a] text-gray-100 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
   }
 
   .badge {

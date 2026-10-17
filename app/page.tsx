@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const [adminKey, setAdminKey] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -24,34 +24,24 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    // Validate key is not empty
-    if (!adminKey.trim()) {
-      setError('Please enter an API key');
+    if (!password) {
+      setError('Please enter your password');
       setLoading(false);
       return;
     }
 
     try {
-      // Test the key by making a request to the stats endpoint
-      const apiUrl = API_BASE_URL;
-      const response = await fetch(`${apiUrl}/admin/stats`, {
-        headers: {
-          'Authorization': `Bearer ${adminKey}`,
-        },
+      const response = await fetch(`${API_BASE_URL}/admin/session/login`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }), cache: 'no-store'
       });
-
       if (!response.ok) {
-        if (response.status === 401) {
-          setError('Invalid API key or insufficient permissions. Admin access required.');
-        } else {
-          setError('Failed to authenticate. Please try again.');
-        }
-        setLoading(false);
-        return;
+        setError(response.status === 429 ? 'Too many attempts. Please wait before trying again.' : response.status === 401 ? 'Incorrect password.' : 'Sign-in is temporarily unavailable.');
+        setLoading(false); return;
       }
-
-      // Save to sessionStorage and redirect
-      sessionStorage.setItem('adminKey', adminKey);
+      const session = await response.json();
+      sessionStorage.setItem('adminKey', session.token);
+      setPassword('');
       router.push('/dashboard');
     } catch (err) {
       setError('Network error. Please check your connection and try again.');
@@ -60,32 +50,32 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-[#0b1020] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-100">
             Qwen Proxy Dashboard
           </h2>
           <p className="mt-2 text-center text-sm text-gray-400">
-            Enter your admin API key to continue
+            Sign in to your private staging dashboard
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="admin-key" className="sr-only">
-                Admin API Key
+              <label htmlFor="dashboard-password" className="sr-only">
+                Dashboard password
               </label>
               <input
-                id="admin-key"
-                name="admin-key"
+                id="dashboard-password"
+                name="password"
                 type="password"
-                autoComplete="off"
+                autoComplete="current-password"
                 required
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-[#333] bg-[#1a1a1a] placeholder-gray-500 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                value={adminKey}
-                onChange={(e) => setAdminKey(e.target.value)}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-[#27334a] bg-[#111a2c] placeholder-gray-500 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
@@ -118,7 +108,7 @@ export default function LoginPage() {
 
         <div className="text-center">
           <p className="text-xs text-gray-500">
-            Only enterprise-tier API keys have admin access
+            Staging access · short-lived secure session
           </p>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import CookieGuide from './CookieGuide';
-import { parseJWT, buildCookiesTxt, parseCookiesTxt, parseFullCookieString, parseFullHeaders } from '../lib/cookieUtils';
+import { parseJWT, buildCookiesTxt, parseCookiesTxt, parseFullCookieString, parseFullHeaders, normalizeCookiePaste } from '../lib/cookieUtils';
 
 interface CookieStatus {
   source: 'environment' | 'file' | 'runtime';
@@ -137,22 +137,10 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
     setSuccess('');
 
     try {
-      if (!token.trim()) {
-        throw new Error('Token is required');
-      }
-
-      // Validate JWT format
-      const jwtParse = parseJWT(token);
-      if (!jwtParse.valid) {
-        throw new Error('Invalid JWT token format');
-      }
-
-      if (!bxUa.trim()) {
-        throw new Error('bx-ua header is required for anti-bot protection');
-      }
-
-      // Build cookies.txt content (minimal - only required cookies)
-      const cookiesContent = buildCookiesTxt(token.trim(), undefined, bxUmidtoken.trim());
+      const pasted = fullCookieString.trim() ? normalizeCookiePaste(fullCookieString) : '';
+      if (!pasted && !token.trim()) throw new Error('Paste a cookie export or enter a token.');
+      if (!pasted && token.trim() && !parseJWT(token).valid) throw new Error('Invalid JWT token format');
+      const cookiesContent = pasted || buildCookiesTxt(token.trim(), undefined, bxUmidtoken.trim());
 
       // Upload cookies
       const cookiesResponse = await fetch(`${apiUrl}/admin/cookies/upload`, {
@@ -169,7 +157,9 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
         throw new Error(errorData.error?.message || 'Failed to upload cookies');
       }
 
-      // Upload headers (bx-ua and optional bx-umidtoken)
+      // Fingerprint headers are optional for a cookie-only browser export.
+      let headersResult = { data: { persisted: true } };
+      if (bxUa.trim()) {
       const headersResponse = await fetch(`${apiUrl}/admin/headers/upload`, {
         method: 'POST',
         headers: {
@@ -186,9 +176,9 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
         const errorData = await headersResponse.json();
         throw new Error(errorData.error?.message || 'Failed to upload headers');
       }
-
+      headersResult = await headersResponse.json();
+      }
       const cookiesResult = await cookiesResponse.json();
-      const headersResult = await headersResponse.json();
       const runtimeOnly = !cookiesResult.data.persisted || !headersResult.data.persisted;
       setSuccess(runtimeOnly
         ? '✓ Credentials updated for this process. Update COOKIES_B64/HEADERS_B64 in your deployment settings to survive a restart.'
@@ -291,8 +281,10 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
       if (parsedHeaders.bxUa) found.push(`bx-ua (${parsedHeaders.bxUa.length} chars)`);
       if (parsedCookies.bxUmidtoken || parsedHeaders.bxUmidtoken) found.push('bx-umidtoken');
 
-      if (found.length > 0) {
-        setSuccess(`✓ Parsed and filled: ${found.join(', ')}`);
+      const normalized = normalizeCookiePaste(fullCookieString);
+      const cookieCount = normalized.split('\n').filter(line => line && !line.startsWith('#')).length;
+      if (found.length > 0 || cookieCount > 0) {
+        setSuccess(`✓ Parsed ${cookieCount} cookie(s)${found.length ? `; detected ${found.join(', ')}` : ''}. Headers are optional. Click Save Credentials to apply.`);
         setShowQuickPaste(false);
         setShowManualInput(true);
       } else {
@@ -500,14 +492,14 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
             <div className="mb-4">
               <h3 className="text-md font-medium text-gray-100 mb-2">⚡ Quick Paste</h3>
               <p className="text-sm text-gray-400">
-                Copy cookies and headers directly from DevTools and paste below. We'll extract the values automatically.
+                Paste a complete tab-separated browser cookie export, a Cookie header, or raw cookie pairs. Headers are optional.
               </p>
             </div>
 
-            {/* Full Cookie String */}
+            {/* Full Cookie Export (headers optional) */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Full Cookie String
+                Full Cookie Export (headers optional)
               </label>
               <textarea
                 value={fullCookieString}
@@ -517,7 +509,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
                 className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               <p className="text-xs text-gray-500 mt-1">
-                📋 Copy from DevTools → Network tab → Request Headers → Cookie
+                📋 Works with DevTools cookie tables, Netscape exports, or a Cookie: header.
               </p>
             </div>
 
@@ -562,7 +554,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
             <div className="bg-blue-900/20 border border-blue-800 rounded p-3">
               <p className="text-xs text-blue-300">
                 💡 <strong>Tip:</strong> Paste the full cookie string and/or headers, then click "Parse & Fill".
-                The individual fields below will be automatically populated. After that, click "Save Credentials" to apply.
+                Your full cookie paste is kept intact. Optional fingerprint headers can be added separately; click Save Credentials to apply.
               </p>
             </div>
           </div>
