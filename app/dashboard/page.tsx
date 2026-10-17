@@ -164,7 +164,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0b1020] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
           <div className="text-gray-400">Loading dashboard...</div>
@@ -174,7 +174,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8">
+    <div className="min-h-screen bg-[#0b1020] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="card p-6 mb-6">
@@ -436,7 +436,7 @@ export default function DashboardPage() {
             {createdKey ? (
               <div>
                 <p className="text-sm text-gray-400 mb-3">Your new API key has been created. Copy it now - you won't see it again!</p>
-                <div className="bg-[#0a0a0a] p-3 rounded border border-[#333] mb-4">
+                <div className="bg-[#0b1020] p-3 rounded border border-[#333] mb-4">
                   <code className="text-sm text-indigo-400 break-all">{createdKey}</code>
                 </div>
                 <div className="flex space-x-3">
@@ -466,7 +466,7 @@ export default function DashboardPage() {
                     required
                     value={newKeyName}
                     onChange={(e) => setNewKeyName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#333] text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-3 py-2 bg-[#0b1020] border border-[#333] text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     placeholder="My Application"
                   />
                 </div>
@@ -475,7 +475,7 @@ export default function DashboardPage() {
                   <select
                     value={newKeyTier}
                     onChange={(e) => setNewKeyTier(e.target.value as 'free' | 'premium' | 'enterprise')}
-                    className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#333] text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-3 py-2 bg-[#0b1020] border border-[#333] text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   >
                     <option value="free">Free</option>
                     <option value="premium">Premium</option>

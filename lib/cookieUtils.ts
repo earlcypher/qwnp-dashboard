@@ -114,3 +114,30 @@ export function parseFullHeaders(headersString: string): { bxUa?: string; bxUmid
 
   return result;
 }
+
+
+/** Convert a browser cookie-table export, Netscape jar, Cookie header, or raw pair list to Netscape format. */
+export function normalizeCookiePaste(content: string): string {
+  const rows: Array<[string, string]> = [];
+  const addPair = (name: string, value: string) => {
+    name = name.trim(); value = value.trim();
+    if (/^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/.test(name) && value && !/[\x00-\x1f\x7f;]/.test(value)) rows.push([name, value]);
+  };
+  for (const raw of content.split(/\r?\n/)) {
+    const line = raw.trim(); if (!line) continue;
+    if (/^#HttpOnly_/.test(line) || line.startsWith('#')) {
+      const cols = line.replace(/^#HttpOnly_/, '').split('\t');
+      if (cols.length >= 7 && /^(TRUE|FALSE)$/i.test(cols[1])) addPair(cols[5], cols[6]);
+      continue;
+    }
+    const cookieHeader = line.match(/^cookie\s*:\s*(.*)$/i);
+    if (cookieHeader) { for (const pair of cookieHeader[1].split(';')) { const i = pair.indexOf('='); if (i > 0) addPair(pair.slice(0,i), pair.slice(i+1)); } continue; }
+    const cols = line.split('\t');
+    if (cols[0]?.trim().toLowerCase() === 'name' && cols[1]?.trim().toLowerCase() === 'value') continue;
+    if (cols.length >= 7 && /^(TRUE|FALSE)$/i.test(cols[1]) && cols[2].startsWith('/')) { addPair(cols[5], cols[6]); continue; }
+    if (cols.length >= 2) { addPair(cols[0], cols[1]); continue; }
+    if (line.includes(';') && line.includes('=')) { for (const pair of line.split(';')) { const i = pair.indexOf('='); if (i > 0) addPair(pair.slice(0,i), pair.slice(i+1)); } }
+  }
+  const unique = new Map(rows);
+  return ['# Netscape HTTP Cookie File', ...Array.from(unique, ([name,value]) => `.qwen.ai\tTRUE\t/\tTRUE\t0\t${name}\t${value}`)].join('\n');
+}
