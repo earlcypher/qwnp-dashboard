@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import CookieGuide from './CookieGuide';
-import { parseJWT, buildCookiesTxt, parseCookiesTxt, parseFullCookieString, parseFullHeaders, normalizeCookiePaste } from '../lib/cookieUtils';
+import { parseJWT, buildCookiesTxt, parseCookiesTxt, parseFullCookieString, parseFullHeaders, normalizeCookiePaste, getCookieExportNames } from '../lib/cookieUtils';
 
 interface CookieStatus {
   source: 'environment' | 'file' | 'runtime';
@@ -84,20 +84,12 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
     setError('');
     setSuccess('');
     try {
-      // Validate required fields before testing
-      if (!token.trim()) {
-        throw new Error('Token is required for testing');
-      }
-      if (!bxUa.trim()) {
-        throw new Error('bx-ua header is required for testing');
-      }
-
-      // Build test payload with current form values
-      const cookiesContent = buildCookiesTxt(token.trim(), undefined, bxUmidtoken.trim());
-      const headersPayload = {
-        bxUa: bxUa.trim(),
-        bxUmidtoken: bxUmidtoken.trim() || undefined
-      };
+      const exportNames = fullCookieString.trim() ? getCookieExportNames(fullCookieString) : [];
+      const hasAuthCookie = exportNames.includes('token') || exportNames.includes('refresh_token');
+      const cookiesContent = fullCookieString.trim() ? normalizeCookiePaste(fullCookieString) : buildCookiesTxt(token.trim(), undefined, bxUmidtoken.trim());
+      if (fullCookieString.trim() && !hasAuthCookie) throw new Error('Could not find a token or refresh_token cookie in that paste.');
+      if (!cookiesContent || (!fullCookieString.trim() && !token.trim())) throw new Error('Paste a full cookie export or enter a token before testing.');
+      const headersPayload = { bxUa: bxUa.trim() || undefined, bxUmidtoken: bxUmidtoken.trim() || undefined };
 
       const response = await fetch(`${apiUrl}/admin/cookies/test`, {
         method: 'POST',
@@ -140,6 +132,8 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
       const pasted = fullCookieString.trim() ? normalizeCookiePaste(fullCookieString) : '';
       if (!pasted && !token.trim()) throw new Error('Paste a cookie export or enter a token.');
       if (!pasted && token.trim() && !parseJWT(token).valid) throw new Error('Invalid JWT token format');
+      const pastedNames = fullCookieString.trim() ? getCookieExportNames(fullCookieString) : [];
+      if (fullCookieString.trim() && !pastedNames.includes('token') && !pastedNames.includes('refresh_token')) throw new Error('No token or refresh_token cookie was extracted. Check the copied cookie table.');
       const cookiesContent = pasted || buildCookiesTxt(token.trim(), undefined, bxUmidtoken.trim());
 
       // Upload cookies
@@ -281,10 +275,16 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
       if (parsedHeaders.bxUa) found.push(`bx-ua (${parsedHeaders.bxUa.length} chars)`);
       if (parsedCookies.bxUmidtoken || parsedHeaders.bxUmidtoken) found.push('bx-umidtoken');
 
-      const normalized = normalizeCookiePaste(fullCookieString);
-      const cookieCount = normalized.split('\n').filter(line => line && !line.startsWith('#')).length;
-      if (found.length > 0 || cookieCount > 0) {
-        setSuccess(`✓ Parsed ${cookieCount} cookie(s)${found.length ? `; detected ${found.join(', ')}` : ''}. Headers are optional. Click Save Credentials to apply.`);
+      const cookieNames = getCookieExportNames(fullCookieString);
+      const cookieCount = cookieNames.length;
+      const authCookie = cookieNames.includes('token') ? 'token' : cookieNames.includes('refresh_token') ? 'refresh_token' : '';
+      if (authCookie) found.push(`${authCookie} (required authentication cookie)`);
+      if (cookieCount > 0 && !authCookie) {
+        setError(`Extracted ${cookieCount} cookies, but did not find the required token or refresh_token cookie.`);
+        return;
+      }
+      if (cookieCount > 0) {
+        setSuccess(`✓ Extracted ${cookieCount} cookies${found.length ? `, including ${found.join(', ')}` : ''}. Headers are optional. Click Save Credentials to apply.`);
         setShowQuickPaste(false);
         setShowManualInput(true);
       } else {
