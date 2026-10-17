@@ -1,6 +1,6 @@
 # Qwen Proxy Dashboard
 
-**New on staging:** [What's new and getting started](STAGING-GUIDE.md) | [Environment and release runbook](ENVIRONMENTS.md). Hosted staging is not yet verified; production releases require explicit owner approval.
+**New on staging:** [What's new and getting started](STAGING-GUIDE.md) | [Environment and release runbook](ENVIRONMENTS.md). Hosted staging is verified and on-demand; see [hosting and access](STAGING-HOSTING.md). Production releases require explicit owner approval.
 
 A modern web dashboard for managing API keys for the Qwen Proxy server.
 
@@ -227,5 +227,4 @@ MIT
 
 ## Related Projects
 
-- [qwen-proxy](../qwen-proxy) - Qwen Proxy server with API key management
-- [qwen-proxy-v2](../qwen-proxy-v2) - Simplified proxy with Supabase backend
+- [qwnp](https://github.com/earlcypher/qwnp) - Qwen Proxy backend with Supabase authentication and analytics (private repository; access required).

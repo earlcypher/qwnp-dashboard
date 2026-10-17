@@ -22,7 +22,7 @@ Use only the newly generated staging enterprise proxy key to log into this UI. T
 
 The test database and proxy keys are separate. Qwen cookies/headers are shared with production by owner decision, so upstream limits and session invalidation are still shared. There are no automated live-chat CI tests.
 
-The intended staging backend uses Free/on-demand hosting and must be suspended outside scheduled QA. Provisioning is still pending; see the current setup status below. A published Preview URL can therefore load while its API is unavailable. Resume the staging backend for testing and suspend it afterward; do not add keep-alive pings.
+The verified staging backend uses Free/on-demand hosting and must be suspended outside scheduled QA. See [STAGING-HOSTING.md](STAGING-HOSTING.md) for access and its explicit resume/suspend workflow. A published Preview URL can therefore load while its API is unavailable. Resume the staging backend for testing and suspend it afterward; do not add keep-alive pings.
 
 ## Release workflow
 
@@ -46,11 +46,13 @@ NEXT_TELEMETRY_DISABLED=1 npm run build
 
 CI uses pinned checkout/setup-node actions and Node 22, with no production secrets, a job timeout and concurrency cancellation. The legacy `npm run lint` script still calls `next lint`, which is unsupported on Next 16; lint is not part of this CI. Type-check/build success is not a lint or browser E2E pass.
 
-## Current hosted setup status (rechecked 2026-10-18)
+## Current hosted setup status (2026-10-18)
 
-The staging source branch and GitHub CI are ready. **Hosted Preview is not configured or verified yet.** Render API creation cannot fetch the private backend repository, and no staging service is visible in the authenticated account's accessible workspaces. Do not guess an API URL or use production as a fallback. Vercel's automatically triggered staging/feature Preview builds currently fail closed because the required Preview configuration has not been set. The GitHub `Dashboard checks` job independently passes with a safe fixture origin.
+Hosted staging is configured and has passed a real browser smoke test: the STAGING banner is visible, a free key is denied admin login, and the staging enterprise key loads dashboard stats, analytics and the key list from the staging backend. No production API requests, live Qwen calls or key-management writes were made.
 
-After obtaining the actual staging service ID/URL, set all three Preview-only public variables above and rebuild. Production variable scope and main are unchanged by this setup. A Preview URL alone does not prove backend availability.
+Preview-only `NEXT_PUBLIC_APP_ENV`, `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_EXPECTED_API_ORIGIN` are set to staging / `https://qwnp-staging.onrender.com`. The build is READY. Existing Vercel sign-in protection remains enabled; a newly created, short-lived access link used only for the Preview test was revoked. No project-wide automation bypass was created.
+
+Render Git access still fails, so the private backend is delivered via a verified source artifact from its staging branch to a Free image-backed service. It remains the same codebase, not a public fork. [STAGING-HOSTING.md](STAGING-HOSTING.md) explains the links, cold-start tradeoff and planned suspension outside QA. A reachable Preview UI does not imply its backend is currently resumed.
 
 ## Release and rollback
 

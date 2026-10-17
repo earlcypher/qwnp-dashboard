@@ -1,6 +1,6 @@
 # What's new: staging dashboard and contributor quick start
 
-Updated **18 October 2026**. This documents the new code on **`staging`**, not a production release. The dashboard can build and pass isolated CI while hosted Preview remains unconfigured.
+Updated **18 October 2026**. This documents the new code on **`staging`**, not a production release. Hosted Preview is now configured and has passed a browser smoke test; its Free API backend is intentionally on-demand.
 
 ## What's new
 
@@ -15,11 +15,11 @@ Updated **18 October 2026**. This documents the new code on **`staging`**, not a
 
 The earlier maintenance changes remain in [RELEASE-NOTES-2026-10-17.md](RELEASE-NOTES-2026-10-17.md). Use [ENVIRONMENTS.md](ENVIRONMENTS.md) for the environment/release runbook.
 
-## Current state: code ready, hosted Preview pending
+## Current state: verified hosted staging
 
-**Rechecked 18 October 2026:** the backend's authenticated Render account still exposes no staging service. Vercel has the existing Production API variable, but **no Preview environment variables**. Automatic Preview builds therefore fail safely rather than silently use production.
+**Verified 18 October 2026:** the Preview build is READY and uses `https://qwnp-staging.onrender.com`. Browser testing verified the STAGING banner, free-key rejection, enterprise login and dashboard stats/analytics/key listing. There were no production API calls, live Qwen requests or key-management writes.
 
-Do not invent a Render URL or point Preview at production to make a build green. First identify the actual Free staging backend service and its HTTPS origin in the correct account/workspace. No hosted banner check, hosted API smoke test or backend suspension can yet be claimed complete.
+Normal Vercel sign-in protection remains enabled. Only a temporary, Preview-deployment-specific test link was created, and it was revoked after testing; no project-wide bypass was added. The backend is a Free, private-artifact deployment from staging because Render Git access still fails. It must be suspended outside scheduled QA. See [STAGING-HOSTING.md](STAGING-HOSTING.md) for URLs, access and operations. A loaded UI does not guarantee the backend is currently resumed.
 
 ## Choose the right configuration
 
@@ -84,7 +84,7 @@ Staging has a separate Supabase database and proxy keys. Do not copy production 
 
 1. From a clean, updated `staging`, create a feature/docs branch.
 2. Run the checks above and open a PR with **base `staging`**.
-3. Wait for **Dashboard checks**. A failing Vercel deployment check is separate; currently it reflects the missing hosted staging configuration, not a passing deployed Preview.
+3. Wait for **Dashboard checks**. The Vercel deployment check is separate; inspect it too. Preview configuration is now present, so new candidate deployments should build successfully.
 4. When hosted staging is available, verify the STAGING banner, staging login, API origin and harmless backend authorization checks.
 5. Record paired backend/dashboard SHAs and request explicit owner approval before a production main merge/release or migration.
 6. After approved production rollout, verify the Production deployment separately. For rollback use only an approved, previously verified Production build and reconcile Git through a checked revert PR, not a force-push.
@@ -98,7 +98,7 @@ Public `main` requires a PR and passing `Dashboard checks`, with administrator e
 |---|---|
 | `Preview deployments must explicitly use the staging environment` | Set Preview-only `NEXT_PUBLIC_APP_ENV=staging` alongside both origin values, then rebuild. |
 | `Staging must use its explicitly registered HTTPS backend origin` | Check HTTPS, matching origins, no credentials/path/query, and that the origin is not production. |
-| UI loads, API is unreachable | The backend may be unprovisioned, suspended or starting. Confirm the correct service and plan; do not substitute production or add keep-alive pings. |
+| UI loads, API is unreachable | The backend may be suspended or starting. Confirm the correct service and plan; do not substitute production or add keep-alive pings. |
 | Admin login denied with a free key | Use the staging enterprise key, not a production key or Supabase credential. |
 | New variables do not affect the UI | They were compiled into an older bundle; rebuild the intended environment. |
 
