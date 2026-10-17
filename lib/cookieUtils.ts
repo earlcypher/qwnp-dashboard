@@ -135,6 +135,17 @@ export function normalizeCookiePaste(content: string): string {
     const cols = line.split('\t');
     if (cols[0]?.trim().toLowerCase() === 'name' && cols[1]?.trim().toLowerCase() === 'value') continue;
     if (cols.length >= 7 && /^(TRUE|FALSE)$/i.test(cols[1]) && cols[2].startsWith('/')) { addPair(cols[5], cols[6]); continue; }
+    // Some browser clipboard exports flatten multiple TSV rows into one line.
+    let foundBrowserRows = false;
+    for (let i = 0; i + 4 < cols.length; i++) {
+      const domain = cols[i + 2].trim();
+      const expires = cols[i + 4].trim();
+      if ((domain.startsWith('.') || /^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i.test(domain)) &&
+          cols[i + 3].trim().startsWith('/') && (/^\d{4}-\d{2}-\d{2}/.test(expires) || /^session$/i.test(expires))) {
+        addPair(cols[i], cols[i + 1]); foundBrowserRows = true;
+      }
+    }
+    if (foundBrowserRows) continue;
     if (cols.length >= 2) { addPair(cols[0], cols[1]); continue; }
     if (line.includes(';') && line.includes('=')) { for (const pair of line.split(';')) { const i = pair.indexOf('='); if (i > 0) addPair(pair.slice(0,i), pair.slice(i+1)); } }
   }
