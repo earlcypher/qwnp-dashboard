@@ -179,42 +179,42 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="card p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-gray-100">Qwen Proxy Dashboard</h1>
-            <div className="flex space-x-3">
+            <h1 className="text-2xl font-semibold tracking-tight text-gray-100">Qwen Proxy Dashboard</h1>
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setShowPlaygroundModal(true)}
-                className="px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 transition-colors"
+                className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-500 transition-colors duration-150"
               >
-                🎮 Playground
+                Playground
               </button>
               <button
                 onClick={() => setShowDocsModal(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-sky-600 text-white rounded-lg text-sm font-medium hover:bg-sky-500 transition-colors duration-150"
               >
-                📖 API Docs
+                API Docs
               </button>
               <button
                 onClick={() => setShowTiersModal(true)}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
+                className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-400 transition-colors duration-150"
               >
-                🏆 Tiers
+                Tiers
               </button>
               <button
                 onClick={() => setShowLogsModal(true)}
-                className="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 transition-colors"
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-500 transition-colors duration-150"
               >
-                📊 Logs
+                Logs
               </button>
               <button
                 onClick={() => loadData(adminKey)}
-                className="px-4 py-2 border border-[#333] text-gray-300 rounded-md text-sm font-medium hover:bg-[#252525] transition-colors"
+                className="px-4 py-2 border border-[#263449] text-gray-300 rounded-xl text-sm font-medium hover:bg-[#152033] transition-colors duration-150"
                 title="Refresh data"
               >
-                ↻
+                Refresh
               </button>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 border border-[#333] rounded-md text-sm font-medium text-gray-300 hover:bg-[#252525] transition-colors"
+                className="px-4 py-2 border border-[#263449] rounded-lg text-sm font-medium text-gray-300 hover:bg-[#152033] transition-colors duration-150"
               >
                 Logout
               </button>
@@ -222,14 +222,14 @@ export default function DashboardPage() {
           </div>
 
           {/* Auto-refresh controls */}
-          <div className="flex items-center gap-4 pt-4 border-t border-[#333]">
+          <div className="flex items-center gap-4 pt-4 border-t border-[#263449]">
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 id="autoRefresh"
                 checked={autoRefresh}
                 onChange={(e) => setAutoRefresh(e.target.checked)}
-                className="w-4 h-4 text-indigo-600 bg-[#1a1a1a] border-[#333] rounded focus:ring-indigo-500"
+                className="w-4 h-4 text-indigo-600 bg-[#0d1523] border-[#263449] rounded focus:ring-indigo-500"
               />
               <label htmlFor="autoRefresh" className="text-sm text-gray-300">
                 Auto-refresh
@@ -239,7 +239,7 @@ export default function DashboardPage() {
               <select
                 value={refreshInterval}
                 onChange={(e) => setRefreshInterval(parseInt(e.target.value))}
-                className="px-3 py-1 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="px-3 py-1 bg-[#0d1523] border border-[#263449] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="30">Every 30s</option>
                 <option value="60">Every 1m</option>
@@ -258,13 +258,13 @@ export default function DashboardPage() {
         {error && (
           <div className="bg-red-900/20 border border-red-800 text-red-300 px-4 py-3 rounded-lg mb-6 flex justify-between items-center">
             <span>{error}</span>
-            <button onClick={() => setError('')} className="text-red-400 hover:text-red-300">✕</button>
+            <button onClick={() => setError('')} className="text-red-400 hover:text-red-300">×</button>
           </div>
         )}
         {success && (
           <div className="bg-green-900/20 border border-green-800 text-green-300 px-4 py-3 rounded-lg mb-6 flex justify-between items-center">
             <span>{success}</span>
-            <button onClick={() => setSuccess('')} className="text-green-400 hover:text-green-300">✕</button>
+            <button onClick={() => setSuccess('')} className="text-green-400 hover:text-green-300">×</button>
           </div>
         )}
 
@@ -315,7 +315,7 @@ export default function DashboardPage() {
 
         {/* API Keys List */}
         <div className="card">
-          <div className="px-6 py-4 border-b border-[#333] flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <div className="px-6 py-4 border-b border-[#263449] flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <h2 className="text-lg font-medium text-gray-100">API Keys ({filteredKeys.length})</h2>
             <div className="flex flex-col sm:flex-row gap-3">
               <input
@@ -323,11 +323,11 @@ export default function DashboardPage() {
                 placeholder="Search keys..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 whitespace-nowrap transition-colors"
+                className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-400 whitespace-nowrap transition-colors duration-150"
               >
                 + Create Key
               </button>
@@ -344,7 +344,7 @@ export default function DashboardPage() {
                 {!searchQuery && (
                   <button
                     onClick={() => setShowCreateModal(true)}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-400 transition-colors duration-150"
                   >
                     Create First Key
                   </button>
@@ -366,7 +366,7 @@ export default function DashboardPage() {
                   {filteredKeys.map((key) => (
                     <tr
                       key={key.id}
-                      className="hover:bg-[#151515] transition-colors cursor-pointer"
+                      className="hover:bg-[#151515] transition-colors duration-150 cursor-pointer"
                       onClick={() => setSelectedKey(key)}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">{key.name}</td>
@@ -397,7 +397,7 @@ export default function DashboardPage() {
                               e.stopPropagation();
                               handleToggleActive(key.id, key.is_active);
                             }}
-                            className="text-indigo-400 hover:text-indigo-300 transition-colors text-left"
+                            className="text-indigo-400 hover:text-indigo-300 transition-colors duration-150 text-left"
                           >
                             {key.is_active ? 'Deactivate' : 'Activate'}
                           </button>
@@ -406,7 +406,7 @@ export default function DashboardPage() {
                               e.stopPropagation();
                               handleDeleteKey(key.id, key.name);
                             }}
-                            className="text-red-400 hover:text-red-300 transition-colors text-left"
+                            className="text-red-400 hover:text-red-300 transition-colors duration-150 text-left"
                           >
                             Delete
                           </button>
@@ -436,13 +436,13 @@ export default function DashboardPage() {
             {createdKey ? (
               <div>
                 <p className="text-sm text-gray-400 mb-3">Your new API key has been created. Copy it now - you won't see it again!</p>
-                <div className="bg-[#0b1020] p-3 rounded border border-[#333] mb-4">
+                <div className="bg-[#0b1020] p-3 rounded-xl border border-[#263449] mb-4">
                   <code className="text-sm text-indigo-400 break-all">{createdKey}</code>
                 </div>
-                <div className="flex space-x-3">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => copyToClipboard(createdKey)}
-                    className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
+                    className="flex-1 px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-400 transition-colors duration-150"
                   >
                     Copy Key
                   </button>
@@ -451,7 +451,7 @@ export default function DashboardPage() {
                       setCreatedKey('');
                       setShowCreateModal(false);
                     }}
-                    className="flex-1 px-4 py-2 border border-[#333] rounded-md text-sm font-medium text-gray-300 hover:bg-[#252525] transition-colors"
+                    className="flex-1 px-4 py-2 border border-[#263449] rounded-lg text-sm font-medium text-gray-300 hover:bg-[#152033] transition-colors duration-150"
                   >
                     Close
                   </button>
@@ -466,7 +466,7 @@ export default function DashboardPage() {
                     required
                     value={newKeyName}
                     onChange={(e) => setNewKeyName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0b1020] border border-[#333] text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-3 py-2 bg-[#0b1020] border border-[#263449] text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     placeholder="My Application"
                   />
                 </div>
@@ -475,24 +475,24 @@ export default function DashboardPage() {
                   <select
                     value={newKeyTier}
                     onChange={(e) => setNewKeyTier(e.target.value as 'free' | 'premium' | 'enterprise')}
-                    className="w-full px-3 py-2 bg-[#0b1020] border border-[#333] text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full px-3 py-2 bg-[#0b1020] border border-[#263449] text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   >
                     <option value="free">Free</option>
                     <option value="premium">Premium</option>
                     <option value="enterprise">Enterprise</option>
                   </select>
                 </div>
-                <div className="flex space-x-3">
+                <div className="flex flex-wrap gap-2">
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
+                    className="flex-1 px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-400 transition-colors duration-150"
                   >
                     Create
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    className="flex-1 px-4 py-2 border border-[#333] rounded-md text-sm font-medium text-gray-300 hover:bg-[#252525] transition-colors"
+                    className="flex-1 px-4 py-2 border border-[#263449] rounded-lg text-sm font-medium text-gray-300 hover:bg-[#152033] transition-colors duration-150"
                   >
                     Cancel
                   </button>

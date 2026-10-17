@@ -66,7 +66,7 @@ export default function TopKeysChart({ data, height = 300 }: TopKeysChartProps) 
             if (active && payload && payload.length) {
               const data = payload[0].payload as TopKey;
               return (
-                <div className="bg-[#1a1a1a] border border-[#333] rounded-lg p-3">
+                <div className="bg-[#0d1523] border border-[#263449] rounded-lg p-3">
                   <p className="text-white font-medium mb-1">{data.name}</p>
                   <p className="text-gray-400 text-sm mb-1">
                     <span className={`badge ${

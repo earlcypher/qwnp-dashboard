@@ -66,7 +66,7 @@ export default function LogsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
           <div className="text-gray-400">Loading logs...</div>
@@ -76,7 +76,7 @@ export default function LogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8">
+    <div className="min-h-screen bg-transparent py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="card p-6 mb-6">
@@ -87,9 +87,9 @@ export default function LogsPage() {
             </div>
             <button
               onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 border border-[#333] text-gray-300 rounded-md text-sm font-medium hover:bg-[#252525] transition-colors"
+              className="px-4 py-2 border border-[#263449] text-gray-300 rounded-lg text-sm font-medium hover:bg-[#152033] transition-colors duration-150"
             >
-              ← Back to Dashboard
+              Back to Dashboard
             </button>
           </div>
 
@@ -102,7 +102,7 @@ export default function LogsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="">All Statuses</option>
                 <option value="200">Success (2xx)</option>
@@ -117,7 +117,7 @@ export default function LogsPage() {
               <select
                 value={limit}
                 onChange={(e) => setLimit(parseInt(e.target.value))}
-                className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="25">25 logs</option>
                 <option value="50">50 logs</option>
@@ -171,12 +171,12 @@ export default function LogsPage() {
                 </thead>
                 <tbody className="divide-y divide-[#333]">
                   {logs.map((log) => (
-                    <tr key={log.id} className="hover:bg-[#151515] transition-colors">
+                    <tr key={log.id} className="hover:bg-[#151515] transition-colors duration-150">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                         {formatTime(log.created_at)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 py-1 text-xs font-medium rounded bg-[#252525] text-gray-300">
+                        <span className="px-2 py-1 text-xs font-medium rounded bg-[#152033] text-gray-300">
                           {log.method}
                         </span>
                       </td>

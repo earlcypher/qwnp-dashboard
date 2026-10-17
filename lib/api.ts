@@ -105,6 +105,19 @@ export async function createApiKey(
   return response.json();
 }
 
+/** Reveal one selected active API key for the Playground only. The caller keeps it in memory. */
+export async function revealApiKey(adminSession: string, keyId: string): Promise<ApiResponse<{ key: string }>> {
+  const response = await fetch(`${API_BASE_URL}/admin/api-keys/${encodeURIComponent(keyId)}/reveal`, {
+    method: 'POST', cache: 'no-store',
+    headers: { Authorization: `Bearer ${adminSession}`, 'Content-Type': 'application/json' },
+  });
+  if (!response.ok) {
+    const error: ApiErrorResponse = await response.json().catch(() => ({ error: { message: 'Could not prepare selected key' } }));
+    throw new ApiError(error.error?.message || 'Could not prepare selected key', response.status);
+  }
+  return response.json();
+}
+
 /**
  * Update an API key
  */
