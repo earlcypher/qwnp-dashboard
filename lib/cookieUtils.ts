@@ -184,3 +184,8 @@ export function normalizeCookiePaste(content: string): string {
 export function getCookieExportNames(content: string): string[] {
   return normalizeCookiePaste(content).split(/\r?\n/).filter(line => line && !line.startsWith('#')).map(line => line.split('\t')[5]).filter(Boolean);
 }
+
+/** Enable save for a pasted cookie export or a manual token; optional headers never block it. */
+export function canSaveCredentials(cookiePaste: string, token: string, uploading: boolean): boolean {
+  return !uploading && Boolean(cookiePaste.trim() || token.trim());
+}

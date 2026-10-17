@@ -8,7 +8,7 @@ import { pathToFileURL } from 'node:url';
 const out=mkdtempSync(join(tmpdir(),'cookie-utils-'));
 writeFileSync(join(out,'package.json'),JSON.stringify({type:'module'}));
 execFileSync(resolve('node_modules/.bin/tsc'),['--ignoreConfig','lib/cookieUtils.ts','--module','ESNext','--target','ES2022','--outDir',out,'--skipLibCheck'],{stdio:'pipe'});
-const { normalizeCookiePaste, getCookieExportNames }=await import(pathToFileURL(join(out,'cookieUtils.js')).href);
+const { normalizeCookiePaste, getCookieExportNames, canSaveCredentials }=await import(pathToFileURL(join(out,'cookieUtils.js')).href);
 test.after(()=>rmSync(out,{recursive:true,force:true}));
 test('normalizes multi-line browser cookie tables and ignores their column header',()=>{
  const out=normalizeCookiePaste('Name\tValue\tDomain\tPath\tExpires\tSize\nalpha\tone\t.qwen.ai\t/\tSession\t3\nbeta\ttwo\tchat.qwen.ai\t/\t2027-01-01T00:00:00Z\t3');
@@ -38,4 +38,11 @@ test('extracts required names across Qwen, Alibaba-domain, SameSite and flattene
  const names=['*bl*uid','_c_WBKFRo','_gcl_au','acw_tc','atpsida','aui','cbc','cna','cnaui','isg','qwen-locale','qwen-theme','qwen-thinking_mode','refresh_token','sca','ssxmod_itna','ssxmod_itna2','tfstk','x-ap','xlly_s'];
  const flat=names.map((name,i)=>`${name}v${i}${i===6?'.alibaba.com':i%2?'chat.qwen.ai':'.qwen.ai'}/${i%3===0?'Session':'2027-04-15T18:45:25.000Z'}${10+i}${i%4===0?'✓✓Lax':i%3===0?'✓None':''}Medium`).join('');
  const extracted=getCookieExportNames(flat);assert.equal(extracted.length,names.length);assert.ok(extracted.includes('refresh_token'));assert.ok(extracted.includes('cbc'));assert.ok(extracted.includes('xlly_s'));assert.equal(extracted[0],'_bl_uid');
+});
+
+test('cookie-only paste enables Save without a token field or fingerprint headers',()=>{
+ assert.equal(canSaveCredentials('cookie export with refresh_token','',false),true);
+ assert.equal(canSaveCredentials('', 'manual-token', false),true);
+ assert.equal(canSaveCredentials('', '', false),false);
+ assert.equal(canSaveCredentials('cookie export','',true),false);
 });
