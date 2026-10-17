@@ -150,6 +150,37 @@ export function normalizeCookiePaste(content: string): string {
     if (cols.length >= 2) { addPair(cols[0], cols[1]); continue; }
     if (line.includes(';') && line.includes('=')) { for (const pair of line.split(';')) { const i = pair.indexOf('='); if (i > 0) addPair(pair.slice(0,i), pair.slice(i+1)); } }
   }
+  // Handle browser table copies that have had every separator removed by the clipboard/chat surface.
+  if (rows.length === 0) {
+    const flat = content.replace(/\s+/g, '');
+    const knownNames = [
+      '*bl*uid', '_bl_uid', '_c_WBKFRo', '_gcl_au', 'qwen-thinking_mode',
+      'ssxmod_itna2', 'ssxmod_itna', 'refresh_token', 'bx-umidtoken', 'token', 'qwen-locale',
+      'qwen-theme', 'atpsida', 'xlly_s', 'acw_tc', 'cnaui', 'tfstk',
+      'x-ap', 'aui', 'cbc', 'cna', 'isg', 'sca'
+    ].sort((a,b) => b.length-a.length);
+    const domainNames = ['chat.qwen.ai', '.qwen.ai', '.alibaba.com'];
+    let cursor = 0;
+    while (cursor < flat.length) {
+      const matchedName = knownNames.find(name => flat.startsWith(name, cursor));
+      if (!matchedName) { rows.length = 0; break; }
+      const valueStart = cursor + matchedName.length;
+      let domainAt = -1;
+      for (const candidate of domainNames) { const at = flat.indexOf(candidate, valueStart); if (at >= 0 && (domainAt < 0 || at < domainAt)) { domainAt = at; } }
+      if (domainAt <= valueStart) { rows.length = 0; break; }
+      const value = flat.slice(valueStart, domainAt);
+      const tail = flat.slice(domainAt).match(/^(?:chat\.qwen\.ai|\.qwen\.ai|\.alibaba\.com)\/(?:Session|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z)\d+(?:✓|✔)*(?:None|Lax|Strict)?(?:Medium|Low|High)/);
+      if (!value || !tail) { rows.length = 0; break; }
+      const name = matchedName === '*bl*uid' ? '_bl_uid' : matchedName;
+      addPair(name, value);
+      cursor = domainAt + tail[0].length;
+    }
+  }
   const unique = new Map(rows);
   return ['# Netscape HTTP Cookie File', ...Array.from(unique, ([name,value]) => `.qwen.ai\tTRUE\t/\tTRUE\t0\t${name}\t${value}`)].join('\n');
+}
+
+/** Return cookie names only, so the UI can confirm extraction without displaying secrets. */
+export function getCookieExportNames(content: string): string[] {
+  return normalizeCookiePaste(content).split(/\r?\n/).filter(line => line && !line.startsWith('#')).map(line => line.split('\t')[5]).filter(Boolean);
 }
