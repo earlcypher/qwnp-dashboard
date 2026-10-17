@@ -138,7 +138,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 overflow-y-auto">
       <div className="card max-h-[calc(100vh-2rem)] max-w-7xl w-full my-4 overflow-y-auto">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#263449] flex justify-between items-center">
+        <div className="px-6 py-4 border-b border-[#25272a] flex justify-between items-center">
           <div>
             <h2 className="text-xl font-bold text-gray-100">API Playground</h2>
             <p className="text-gray-400 text-sm mt-1">Test the Qwen API interactively</p>
@@ -158,7 +158,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
             {/* Left: Request Builder */}
             <div className="space-y-6">
               {/* Model & Parameters */}
-              <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+              <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                 <h3 className="text-md font-medium text-gray-100 mb-4">Configuration</h3>
 
                 <div className="space-y-4">
@@ -178,7 +178,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                     <select
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                       {models.map(m => (
                         <option key={m.id} value={m.id}>{m.name}</option>
@@ -222,7 +222,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                       id="stream"
                       checked={stream}
                       onChange={(e) => setStream(e.target.checked)}
-                      className="w-4 h-4 text-indigo-600 bg-[#0d1523] border-[#263449] rounded focus:ring-indigo-500"
+                      className="w-4 h-4 text-indigo-600 bg-[#0f1012] border-[#25272a] rounded focus:ring-indigo-500"
                     />
                     <label htmlFor="stream" className="ml-2 text-sm text-gray-300">
                       Stream response
@@ -232,7 +232,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
               </div>
 
               {/* Messages */}
-              <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+              <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-md font-medium text-gray-100">Messages</h3>
                   <div className="flex gap-2">
@@ -253,7 +253,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
 
                 <div className="space-y-3 max-h-80 overflow-y-auto">
                   {messages.map((message, index) => (
-                    <div key={index} className="bg-[#0d1523] p-3 rounded-xl border border-[#263449]">
+                    <div key={index} className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a]">
                       <div className="flex justify-between items-center mb-2">
                         <span className={`text-xs font-medium px-2 py-1 rounded ${
                           message.role === 'user'
@@ -274,7 +274,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                         onChange={(e) => updateMessage(index, e.target.value)}
                         placeholder={`Enter ${message.role} message...`}
                         rows={3}
-                        className="w-full px-3 py-2 bg-[#070b13] border border-[#263449] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-3 py-2 bg-[#050607] border border-[#25272a] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                     </div>
                   ))}
@@ -293,7 +293,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                 <button
                   onClick={handleClear}
                   disabled={loading}
-                  className="px-4 py-3 border border-[#263449] text-gray-300 rounded-xl font-medium hover:bg-[#152033] disabled:opacity-50 transition-colors duration-150"
+                  className="px-4 py-3 border border-[#25272a] text-gray-300 rounded-xl font-medium hover:bg-[#1d1e20] disabled:opacity-50 transition-colors duration-150"
                 >
                   Clear
                 </button>
@@ -302,7 +302,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
 
             {/* Right: Response */}
             <div className="space-y-6">
-              <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+              <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                 <h3 className="text-md font-medium text-gray-100 mb-4">Response</h3>
 
                 {error && (
@@ -319,7 +319,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                 )}
 
                 {(response || (loading && stream)) && (
-                  <div className="bg-[#0d1523] p-4 rounded-xl border border-[#263449] min-h-[500px] max-h-[500px] overflow-y-auto">
+                  <div className="bg-[#0f1012] p-4 rounded-xl border border-[#25272a] min-h-[500px] max-h-[500px] overflow-y-auto">
                     <pre className="text-sm text-gray-300 whitespace-pre-wrap font-sans">
                       {response || 'Streaming...'}
                     </pre>
@@ -327,7 +327,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                 )}
 
                 {!response && !loading && !error && (
-                  <div className="bg-[#0d1523] p-12 rounded-xl border border-[#263449] text-center">
+                  <div className="bg-[#0f1012] p-12 rounded-xl border border-[#25272a] text-center">
                     <div className="text-gray-500">Response will appear here</div>
                   </div>
                 )}

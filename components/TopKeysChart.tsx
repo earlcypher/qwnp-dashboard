@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface TopKey {
   id: string;
@@ -14,83 +14,63 @@ interface TopKeysChartProps {
   height?: number;
 }
 
+const numberFormat = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
+
+function getTierColor(tier: string) {
+  switch (tier) {
+    case 'enterprise': return '#a394ff';
+    case 'premium': return '#64b5ff';
+    case 'free': return '#43d6a5';
+    default: return '#9b9da3';
+  }
+}
+
 export default function TopKeysChart({ data, height = 300 }: TopKeysChartProps) {
   if (!data || data.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-[300px] text-gray-500">
-        No data available
-      </div>
-    );
+    return <div className="flex h-[300px] items-center justify-center text-sm text-gray-500">No key usage data yet</div>;
   }
 
-  // Truncate long key names for display
   const formattedData = data.map(item => ({
     ...item,
-    displayName: item.name.length > 20 ? item.name.substring(0, 20) + '...' : item.name
+    displayName: item.name.length > 17 ? `${item.name.slice(0, 16)}…` : item.name,
   }));
-
-  // Color by tier
-  const getTierColor = (tier: string) => {
-    switch (tier) {
-      case 'enterprise': return '#a855f7'; // purple
-      case 'premium': return '#3b82f6'; // blue
-      case 'free': return '#6b7280'; // gray
-      default: return '#6366f1'; // indigo
-    }
-  };
 
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={formattedData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+      <BarChart data={formattedData} layout="vertical" margin={{ top: 6, right: 12, left: 4, bottom: 4 }} barCategoryGap={12}>
+        <CartesianGrid horizontal={false} stroke="#222427" strokeDasharray="3 6" />
         <XAxis
-          dataKey="displayName"
-          stroke="#888"
-          style={{ fontSize: '12px' }}
-          angle={-45}
-          textAnchor="end"
-          height={80}
+          type="number"
+          axisLine={false}
+          tickLine={false}
+          tick={{ fill: '#85868b', fontSize: 11 }}
+          tickFormatter={(value: number) => numberFormat.format(value)}
         />
         <YAxis
-          stroke="#888"
-          style={{ fontSize: '12px' }}
+          type="category"
+          dataKey="displayName"
+          width={112}
+          axisLine={false}
+          tickLine={false}
+          tick={{ fill: '#b9bac0', fontSize: 11 }}
         />
         <Tooltip
-          contentStyle={{
-            backgroundColor: '#1a1a1a',
-            border: '1px solid #333',
-            borderRadius: '8px',
-            color: '#fff'
-          }}
+          cursor={{ fill: 'rgba(255,255,255,0.035)' }}
           content={({ active, payload }) => {
-            if (active && payload && payload.length) {
-              const data = payload[0].payload as TopKey;
-              return (
-                <div className="bg-[#0d1523] border border-[#263449] rounded-lg p-3">
-                  <p className="text-white font-medium mb-1">{data.name}</p>
-                  <p className="text-gray-400 text-sm mb-1">
-                    <span className={`badge ${
-                      data.tier === 'enterprise' ? 'bg-purple-900/30 text-purple-400 border-purple-800' :
-                      data.tier === 'premium' ? 'bg-blue-900/30 text-blue-400 border-blue-800' :
-                      'bg-gray-700/30 text-gray-400 border-gray-700'
-                    }`}>
-                      {data.tier}
-                    </span>
-                  </p>
-                  <p className="text-indigo-400 font-medium">
-                    {data.request_count} requests
-                  </p>
-                </div>
-              );
-            }
-            return null;
+            if (!active || !payload?.length) return null;
+            const item = payload[0].payload as TopKey;
+            return (
+              <div className="min-w-40 rounded-xl border border-[#2a2b2f] bg-[#111214] px-3.5 py-3 shadow-2xl shadow-black/50">
+                <p className="mb-1 truncate text-sm font-semibold text-white">{item.name}</p>
+                <p className="mb-2 text-xs capitalize text-gray-500">{item.tier} tier</p>
+                <p className="text-sm font-semibold tabular-nums text-gray-100">{item.request_count.toLocaleString()} <span className="font-normal text-gray-500">requests</span></p>
+              </div>
+            );
           }}
         />
-        <Bar
-          dataKey="request_count"
-          fill="#6366f1"
-          radius={[8, 8, 0, 0]}
-        />
+        <Bar dataKey="request_count" name="Requests" radius={[0, 6, 6, 0]} maxBarSize={24}>
+          {formattedData.map((item) => <Cell key={item.id} fill={getTierColor(item.tier)} />)}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );

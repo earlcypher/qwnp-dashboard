@@ -15,7 +15,7 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
       }}
     >
       <div className="card max-w-4xl w-full my-8 animate-slide-in max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-[#0d1523] px-6 py-4 border-b border-[#263449] flex justify-between items-center z-10">
+        <div className="sticky top-0 bg-[#0f1012] px-6 py-4 border-b border-[#25272a] flex justify-between items-center z-10">
           <h2 className="text-xl font-bold text-gray-100">Cookie Capture Guide</h2>
           <button
             onClick={onClose}
@@ -45,7 +45,7 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
 
             <div className="space-y-4">
               {/* Step 1 */}
-              <div className="bg-[#070b13] border border-[#263449] rounded-lg p-4">
+              <div className="bg-[#050607] border border-[#25272a] rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold">1</span>
                   <div className="flex-1">
@@ -53,7 +53,7 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
                     <p className="text-sm text-gray-400 mb-2">
                       Visit <a href="https://chat.qwen.ai" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">https://chat.qwen.ai</a> and sign in with your account.
                     </p>
-                    <div className="bg-[#0d1523] border border-[#354660] rounded p-2 text-xs text-gray-500">
+                    <div className="bg-[#0f1012] border border-[#3a3c40] rounded p-2 text-xs text-gray-500">
                       Make sure you're fully logged in and can send messages
                     </div>
                   </div>
@@ -61,15 +61,15 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
               </div>
 
               {/* Step 2 */}
-              <div className="bg-[#070b13] border border-[#263449] rounded-lg p-4">
+              <div className="bg-[#050607] border border-[#25272a] rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold">2</span>
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-100 mb-2">Open Developer Tools</h4>
                     <p className="text-sm text-gray-400 mb-2">Press:</p>
                     <ul className="text-sm text-gray-300 space-y-1">
-                      <li>• <kbd className="px-2 py-1 bg-[#0d1523] border border-[#354660] rounded text-xs">F12</kbd> (Windows/Linux)</li>
-                      <li>• <kbd className="px-2 py-1 bg-[#0d1523] border border-[#354660] rounded text-xs">Cmd+Opt+I</kbd> (Mac)</li>
+                      <li>• <kbd className="px-2 py-1 bg-[#0f1012] border border-[#3a3c40] rounded text-xs">F12</kbd> (Windows/Linux)</li>
+                      <li>• <kbd className="px-2 py-1 bg-[#0f1012] border border-[#3a3c40] rounded text-xs">Cmd+Opt+I</kbd> (Mac)</li>
                       <li>• Or right-click to "Inspect"</li>
                     </ul>
                   </div>
@@ -77,7 +77,7 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
               </div>
 
               {/* Step 3 */}
-              <div className="bg-[#070b13] border border-[#263449] rounded-lg p-4">
+              <div className="bg-[#050607] border border-[#25272a] rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold">3</span>
                   <div className="flex-1">
@@ -85,11 +85,11 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
                     <ol className="text-sm text-gray-300 space-y-2 list-decimal list-inside">
                       <li>Go to the <strong>Application</strong> tab (Chrome) or <strong>Storage</strong> tab (Firefox)</li>
                       <li>Expand <strong>Cookies</strong> in the left sidebar</li>
-                      <li>Click on <code className="text-indigo-400 text-xs bg-[#0d1523] px-1">https://chat.qwen.ai</code></li>
-                      <li>Find the cookie named <code className="text-indigo-400 text-xs bg-[#0d1523] px-1">token</code></li>
+                      <li>Click on <code className="text-indigo-400 text-xs bg-[#0f1012] px-1">https://chat.qwen.ai</code></li>
+                      <li>Find the cookie named <code className="text-indigo-400 text-xs bg-[#0f1012] px-1">token</code></li>
                       <li>Copy the <strong>Value</strong> (should start with "eyJ...")</li>
                     </ol>
-                    <div className="bg-[#0d1523] border border-[#354660] rounded p-2 text-xs text-gray-500 mt-2">
+                    <div className="bg-[#0f1012] border border-[#3a3c40] rounded p-2 text-xs text-gray-500 mt-2">
                       Note: The token is a JWT (JSON Web Token) and is typically 200-500 characters long
                     </div>
                   </div>
@@ -97,7 +97,7 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
               </div>
 
               {/* Step 4 */}
-              <div className="bg-[#070b13] border border-[#263449] rounded-lg p-4">
+              <div className="bg-[#050607] border border-[#25272a] rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold">4</span>
                   <div className="flex-1">
@@ -105,12 +105,12 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
                     <ol className="text-sm text-gray-300 space-y-2 list-decimal list-inside">
                       <li>Go to the <strong>Network</strong> tab</li>
                       <li>Type a test message in Qwen chat</li>
-                      <li>Find a request to <code className="text-indigo-400 text-xs bg-[#0d1523] px-1">qwen.ai</code> in the list</li>
+                      <li>Find a request to <code className="text-indigo-400 text-xs bg-[#0f1012] px-1">qwen.ai</code> in the list</li>
                       <li>Click on it and go to <strong>Headers</strong> section</li>
                       <li>Scroll to <strong>Request Headers</strong></li>
-                      <li>Find <code className="text-indigo-400 text-xs bg-[#0d1523] px-1">bx-ua</code> and copy its value</li>
+                      <li>Find <code className="text-indigo-400 text-xs bg-[#0f1012] px-1">bx-ua</code> and copy its value</li>
                     </ol>
-                    <div className="bg-[#0d1523] border border-[#354660] rounded p-2 text-xs text-gray-500 mt-2">
+                    <div className="bg-[#0f1012] border border-[#3a3c40] rounded p-2 text-xs text-gray-500 mt-2">
                       Note: This header is ~2000 characters and contains anti-bot fingerprinting data
                     </div>
                   </div>
@@ -118,7 +118,7 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
               </div>
 
               {/* Step 5 */}
-              <div className="bg-[#070b13] border border-[#263449] rounded-lg p-4">
+              <div className="bg-[#050607] border border-[#25272a] rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold">5</span>
                   <div className="flex-1">
@@ -127,7 +127,7 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
                       In the same cookie list from Step 3, find:
                     </p>
                     <ul className="text-sm text-gray-300 space-y-1 list-disc list-inside">
-                      <li>Cookie name: <code className="text-indigo-400 text-xs bg-[#0d1523] px-1">bx-umidtoken</code></li>
+                      <li>Cookie name: <code className="text-indigo-400 text-xs bg-[#0f1012] px-1">bx-umidtoken</code></li>
                       <li>Copy its value (if present)</li>
                     </ul>
                     <div className="bg-yellow-900/20 border border-yellow-800 rounded p-2 text-xs text-yellow-300 mt-2">
@@ -138,7 +138,7 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
               </div>
 
               {/* Step 6 */}
-              <div className="bg-[#070b13] border border-green-800 rounded-lg p-4">
+              <div className="bg-[#050607] border border-green-800 rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold">6</span>
                   <div className="flex-1">
@@ -159,7 +159,7 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
           <div>
             <h3 className="text-lg font-semibold text-gray-100 mb-3">Method 2: Export cookies.txt (Alternative)</h3>
 
-            <div className="bg-[#070b13] border border-[#263449] rounded-lg p-4">
+            <div className="bg-[#050607] border border-[#25272a] rounded-lg p-4">
               <p className="text-sm text-gray-300 mb-3">
                 If you prefer, you can use a browser extension to export cookies in Netscape format:
               </p>
@@ -191,28 +191,28 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
             <h3 className="text-lg font-semibold text-gray-100 mb-3">Troubleshooting</h3>
 
             <div className="space-y-3">
-              <details className="bg-[#070b13] border border-[#263449] rounded-lg p-4">
+              <details className="bg-[#050607] border border-[#25272a] rounded-lg p-4">
                 <summary className="font-semibold text-gray-100 cursor-pointer">Token not found in cookies</summary>
                 <p className="text-sm text-gray-400 mt-2">
                   Make sure you're logged in to chat.qwen.ai. Try logging out and logging back in, then check again.
                 </p>
               </details>
 
-              <details className="bg-[#070b13] border border-[#263449] rounded-lg p-4">
+              <details className="bg-[#050607] border border-[#25272a] rounded-lg p-4">
                 <summary className="font-semibold text-gray-100 cursor-pointer">bx-ua header not visible</summary>
                 <p className="text-sm text-gray-400 mt-2">
                   Send a message in Qwen chat first to trigger API requests. The header only appears in actual chat API calls.
                 </p>
               </details>
 
-              <details className="bg-[#070b13] border border-[#263449] rounded-lg p-4">
+              <details className="bg-[#050607] border border-[#25272a] rounded-lg p-4">
                 <summary className="font-semibold text-gray-100 cursor-pointer">Connection test fails after upload</summary>
                 <p className="text-sm text-gray-400 mt-2">
                   Verify that: (1) Your token hasn't expired, (2) You copied the complete bx-ua value, (3) Your Qwen account is still active.
                 </p>
               </details>
 
-              <details className="bg-[#070b13] border border-[#263449] rounded-lg p-4">
+              <details className="bg-[#050607] border border-[#25272a] rounded-lg p-4">
                 <summary className="font-semibold text-gray-100 cursor-pointer">Token expires quickly</summary>
                 <p className="text-sm text-gray-400 mt-2">
                   Token expiration is controlled by Qwen. Typical lifetime is 7-30 days. Set up monitoring to get alerted before expiration.
@@ -245,7 +245,7 @@ export default function CookieGuide({ onClose }: CookieGuideProps) {
           </div>
         </div>
 
-        <div className="sticky bottom-0 bg-[#0d1523] px-6 py-4 border-t border-[#263449] flex justify-end">
+        <div className="sticky bottom-0 bg-[#0f1012] px-6 py-4 border-t border-[#25272a] flex justify-end">
           <button
             onClick={onClose}
             className="px-6 py-2 bg-indigo-500 text-white rounded text-sm font-medium hover:bg-indigo-400 transition-colors duration-150"

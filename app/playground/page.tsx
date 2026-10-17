@@ -153,7 +153,7 @@ export default function PlaygroundPage() {
             </div>
             <button
               onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 border border-[#263449] text-gray-300 rounded text-sm font-medium hover:bg-[#152033] transition-colors duration-150"
+              className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
             >
               Back to Dashboard
             </button>
@@ -184,7 +184,7 @@ export default function PlaygroundPage() {
                   <select
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
                     {models.map(m => (
                       <option key={m.id} value={m.id}>{m.name}</option>
@@ -228,7 +228,7 @@ export default function PlaygroundPage() {
                     id="stream"
                     checked={stream}
                     onChange={(e) => setStream(e.target.checked)}
-                    className="w-4 h-4 text-indigo-600 bg-[#0d1523] border-[#263449] rounded focus:ring-indigo-500"
+                    className="w-4 h-4 text-indigo-600 bg-[#0f1012] border-[#25272a] rounded focus:ring-indigo-500"
                   />
                   <label htmlFor="stream" className="ml-2 text-sm text-gray-300">
                     Stream response
@@ -239,7 +239,7 @@ export default function PlaygroundPage() {
 
             {/* Messages */}
             <div className="card p-6">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h3 className="text-lg font-medium text-gray-100">Messages</h3>
                 <div className="flex gap-2">
                   <button
@@ -259,7 +259,7 @@ export default function PlaygroundPage() {
 
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {messages.map((message, index) => (
-                  <div key={index} className="bg-[#070b13] p-3 rounded-xl border border-[#263449]">
+                  <div key={index} className="bg-[#050607] p-3 rounded-xl border border-[#25272a]">
                     <div className="flex justify-between items-center mb-2">
                       <span className={`text-xs font-medium px-2 py-1 rounded ${
                         message.role === 'user'
@@ -280,7 +280,7 @@ export default function PlaygroundPage() {
                       onChange={(e) => updateMessage(index, e.target.value)}
                       placeholder={`Enter ${message.role} message...`}
                       rows={3}
-                      className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
                 ))}
@@ -299,7 +299,7 @@ export default function PlaygroundPage() {
               <button
                 onClick={handleClear}
                 disabled={loading}
-                className="px-4 py-3 border border-[#263449] text-gray-300 rounded-xl font-medium hover:bg-[#152033] disabled:opacity-50 transition-colors duration-150"
+                className="px-4 py-3 border border-[#25272a] text-gray-300 rounded-xl font-medium hover:bg-[#1d1e20] disabled:opacity-50 transition-colors duration-150"
               >
                 Clear
               </button>
@@ -325,7 +325,7 @@ export default function PlaygroundPage() {
               )}
 
               {(response || (loading && stream)) && (
-                <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449] min-h-[400px]">
+                <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] min-h-[400px]">
                   <pre className="text-sm text-gray-300 whitespace-pre-wrap font-sans">
                     {response || 'Streaming...'}
                   </pre>
@@ -333,7 +333,7 @@ export default function PlaygroundPage() {
               )}
 
               {!response && !loading && !error && (
-                <div className="bg-[#070b13] p-12 rounded-xl border border-[#263449] text-center">
+                <div className="bg-[#050607] p-12 rounded-xl border border-[#25272a] text-center">
                   <div className="text-gray-500">Response will appear here</div>
                 </div>
               )}

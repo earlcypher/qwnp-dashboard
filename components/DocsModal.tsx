@@ -11,7 +11,7 @@ export default function DocsModal({ onClose }: DocsModalProps) {
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 overflow-y-auto">
       <div className="card max-w-4xl w-full my-8">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#263449] flex justify-between items-center">
+        <div className="px-6 py-4 border-b border-[#25272a] flex justify-between items-center">
           <div>
             <h2 className="text-xl font-bold text-gray-100">API Documentation</h2>
             <p className="text-gray-400 text-sm mt-1">OpenAI-compatible API for Qwen models</p>
@@ -27,12 +27,12 @@ export default function DocsModal({ onClose }: DocsModalProps) {
         {/* Documentation Content */}
         <div className="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
           {/* Authentication */}
-          <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+          <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
             <h3 className="text-lg font-semibold text-gray-100 mb-3">Authentication</h3>
             <p className="text-gray-300 mb-3 text-sm">
               All API requests require authentication using an API key in the Authorization header:
             </p>
-            <pre className="bg-[#0d1523] p-3 rounded-xl border border-[#263449] text-sm text-gray-300 overflow-x-auto">
+            <pre className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a] text-sm text-gray-300 overflow-x-auto">
 {`Authorization: Bearer sk-your-api-key-here`}
             </pre>
             <p className="text-gray-400 text-xs mt-2">
@@ -41,25 +41,25 @@ export default function DocsModal({ onClose }: DocsModalProps) {
           </div>
 
           {/* Base URL */}
-          <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+          <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
             <h3 className="text-lg font-semibold text-gray-100 mb-3">Base URL</h3>
-            <pre className="bg-[#0d1523] p-3 rounded-xl border border-[#263449] text-sm text-gray-300">
+            <pre className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a] text-sm text-gray-300">
 {API_BASE_URL}
             </pre>
           </div>
 
           {/* Endpoints */}
-          <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+          <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
             <h3 className="text-lg font-semibold text-gray-100 mb-3">Endpoints</h3>
 
             {/* List Models */}
-            <div className="mb-6 pb-6 border-b border-[#263449]">
+            <div className="mb-6 pb-6 border-b border-[#25272a]">
               <div className="flex items-center gap-3 mb-3">
                 <span className="px-2 py-1 bg-green-900/30 text-green-400 text-xs font-medium rounded">GET</span>
                 <code className="text-indigo-400 text-sm">/v1/models</code>
               </div>
               <p className="text-gray-300 mb-3 text-sm">List available Qwen models.</p>
-              <div className="bg-[#0d1523] p-3 rounded-xl border border-[#263449]">
+              <div className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a]">
                 <p className="text-xs text-gray-500 mb-2">Example Response:</p>
                 <pre className="text-xs text-gray-300 overflow-x-auto">
 {`{
@@ -84,7 +84,7 @@ export default function DocsModal({ onClose }: DocsModalProps) {
               <p className="text-gray-300 mb-3 text-sm">Create a chat completion using Qwen models.</p>
 
               <div className="space-y-4">
-                <div className="bg-[#0d1523] p-3 rounded-xl border border-[#263449]">
+                <div className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a]">
                   <p className="text-xs text-gray-500 mb-2">Request Body:</p>
                   <pre className="text-xs text-gray-300 overflow-x-auto">
 {`{
@@ -99,7 +99,7 @@ export default function DocsModal({ onClose }: DocsModalProps) {
                   </pre>
                 </div>
 
-                <div className="bg-[#0d1523] p-3 rounded-xl border border-[#263449]">
+                <div className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a]">
                   <p className="text-xs text-gray-500 mb-2">Example Response (Non-streaming):</p>
                   <pre className="text-xs text-gray-300 overflow-x-auto">
 {`{
@@ -126,7 +126,7 @@ export default function DocsModal({ onClose }: DocsModalProps) {
                   </pre>
                 </div>
 
-                <div className="bg-[#0d1523] p-3 rounded-xl border border-[#263449]">
+                <div className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a]">
                   <p className="text-xs text-gray-500 mb-2">Streaming Response (stream: true):</p>
                   <pre className="text-xs text-gray-300 overflow-x-auto">
 {`data: {"choices":[{"delta":{"content":"Hello"}}]}
@@ -139,7 +139,7 @@ data: [DONE]`}
           </div>
 
           {/* Parameters */}
-          <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+          <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
             <h3 className="text-lg font-semibold text-gray-100 mb-3">Request Parameters</h3>
             <div className="space-y-3 text-sm">
               <div>
@@ -171,13 +171,13 @@ data: [DONE]`}
           </div>
 
           {/* Code Examples */}
-          <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+          <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
             <h3 className="text-lg font-semibold text-gray-100 mb-3">Code Examples</h3>
 
             <div className="space-y-4">
               <div>
                 <p className="text-gray-300 mb-2 font-medium text-sm">cURL</p>
-                <pre className="bg-[#0d1523] p-3 rounded-xl border border-[#263449] text-xs text-gray-300 overflow-x-auto">
+                <pre className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a] text-xs text-gray-300 overflow-x-auto">
 {`curl ${API_BASE_URL}/v1/chat/completions \\
   -H "Authorization: Bearer sk-your-api-key" \\
   -H "Content-Type: application/json" \\
@@ -190,7 +190,7 @@ data: [DONE]`}
 
               <div>
                 <p className="text-gray-300 mb-2 font-medium text-sm">Python (OpenAI SDK)</p>
-                <pre className="bg-[#0d1523] p-3 rounded-xl border border-[#263449] text-xs text-gray-300 overflow-x-auto">
+                <pre className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a] text-xs text-gray-300 overflow-x-auto">
 {`from openai import OpenAI
 
 client = OpenAI(
@@ -209,7 +209,7 @@ print(response.choices[0].message.content)`}
 
               <div>
                 <p className="text-gray-300 mb-2 font-medium text-sm">Node.js (OpenAI SDK)</p>
-                <pre className="bg-[#0d1523] p-3 rounded-xl border border-[#263449] text-xs text-gray-300 overflow-x-auto">
+                <pre className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a] text-xs text-gray-300 overflow-x-auto">
 {`import OpenAI from 'openai';
 
 const client = new OpenAI({
@@ -229,7 +229,7 @@ console.log(response.choices[0].message.content);`}
           </div>
 
           {/* Error Codes */}
-          <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+          <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
             <h3 className="text-lg font-semibold text-gray-100 mb-3">Error Codes</h3>
             <div className="space-y-2 text-sm">
               <div className="flex gap-3">
@@ -260,11 +260,11 @@ console.log(response.choices[0].message.content);`}
           </div>
 
           {/* Rate Limits */}
-          <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+          <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
             <h3 className="text-lg font-semibold text-gray-100 mb-3">Rate Limits by Tier (per instance; configurable)</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="border-b border-[#263449]">
+                <thead className="border-b border-[#25272a]">
                   <tr className="text-left">
                     <th className="pb-3 text-gray-400 font-medium">Tier</th>
                     <th className="pb-3 text-gray-400 font-medium">Requests/min</th>
@@ -272,7 +272,7 @@ console.log(response.choices[0].message.content);`}
                     <th className="pb-3 text-gray-400 font-medium">Features</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#333]">
+                <tbody className="divide-y divide-[#25272a]">
                   <tr>
                     <td className="py-3 text-gray-300">Free</td>
                     <td className="py-3 text-gray-400">20 (default)</td>
