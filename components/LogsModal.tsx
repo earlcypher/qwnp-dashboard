@@ -70,7 +70,7 @@ export default function LogsModal({ adminKey, onClose }: LogsModalProps) {
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 overflow-y-auto">
       <div className="card max-w-7xl w-full my-8">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#333]">
+        <div className="px-6 py-4 border-b border-[#263449]">
           <div className="flex justify-between items-center mb-4">
             <div>
               <h2 className="text-xl font-bold text-gray-100">Request Logs</h2>
@@ -93,7 +93,7 @@ export default function LogsModal({ adminKey, onClose }: LogsModalProps) {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="">All Statuses</option>
                 <option value="200">Success (2xx)</option>
@@ -108,7 +108,7 @@ export default function LogsModal({ adminKey, onClose }: LogsModalProps) {
               <select
                 value={limit}
                 onChange={(e) => setLimit(parseInt(e.target.value))}
-                className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="25">25 logs</option>
                 <option value="50">50 logs</option>
@@ -128,7 +128,7 @@ export default function LogsModal({ adminKey, onClose }: LogsModalProps) {
 
         {/* Logs Table */}
         <div className="p-6 max-h-[calc(100vh-300px)] overflow-y-auto">
-          <div className="bg-[#0a0a0a] rounded border border-[#333] overflow-hidden">
+          <div className="bg-[#070b13] rounded-xl border border-[#263449] overflow-hidden">
             {logs.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-gray-500 text-lg mb-2">No logs found</div>
@@ -163,12 +163,12 @@ export default function LogsModal({ adminKey, onClose }: LogsModalProps) {
                   </thead>
                   <tbody className="divide-y divide-[#333]">
                     {logs.map((log) => (
-                      <tr key={log.id} className="hover:bg-[#151515] transition-colors">
+                      <tr key={log.id} className="hover:bg-[#151515] transition-colors duration-150">
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-400">
                           {formatTime(log.created_at)}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap">
-                          <span className="px-2 py-1 text-xs font-medium rounded bg-[#252525] text-gray-300">
+                          <span className="px-2 py-1 text-xs font-medium rounded bg-[#152033] text-gray-300">
                             {log.method}
                           </span>
                         </td>
