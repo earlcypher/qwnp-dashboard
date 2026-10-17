@@ -1,5 +1,7 @@
 # Dashboard environments
 
+**Start here:** [What's new and contributor quick start](STAGING-GUIDE.md). This page remains the detailed operating runbook.
+
 Production remains `main`. Staging uses the `staging` branch and Vercel Preview, not a paid Custom Environment. Feature branches can use the same Preview variables; they share the one staging backend/database rather than receiving isolated per-PR databases.
 
 ## Preview configuration
@@ -20,7 +22,7 @@ Use only the newly generated staging enterprise proxy key to log into this UI. T
 
 The test database and proxy keys are separate. Qwen cookies/headers are shared with production by owner decision, so upstream limits and session invalidation are still shared. There are no automated live-chat CI tests.
 
-The staging backend is free/on-demand and is deliberately suspended when not in a scheduled QA session. A published Preview URL can therefore load while its API is unavailable. Resume the staging backend for testing and suspend it afterward; do not add keep-alive pings.
+The intended staging backend uses Free/on-demand hosting and must be suspended outside scheduled QA. Provisioning is still pending; see the current setup status below. A published Preview URL can therefore load while its API is unavailable. Resume the staging backend for testing and suspend it afterward; do not add keep-alive pings.
 
 ## Release workflow
 
@@ -42,9 +44,9 @@ NEXT_PUBLIC_EXPECTED_API_ORIGIN=https://staging-fixture.invalid \
 NEXT_TELEMETRY_DISABLED=1 npm run build
 ```
 
-CI uses pinned checkout/setup-node actions and Node 22, with no production secrets, a job timeout and concurrency cancellation. The pre-existing removed `next lint` command remains a documented limitation; type-check/build success is not a lint or browser E2E pass.
+CI uses pinned checkout/setup-node actions and Node 22, with no production secrets, a job timeout and concurrency cancellation. The legacy `npm run lint` script still calls `next lint`, which is unsupported on Next 16; lint is not part of this CI. Type-check/build success is not a lint or browser E2E pass.
 
-## Current hosted setup status (2026-10-17)
+## Current hosted setup status (rechecked 2026-10-18)
 
 The staging source branch and GitHub CI are ready. **Hosted Preview is not configured or verified yet.** Render API creation cannot fetch the private backend repository, and no staging service is visible in the authenticated account's accessible workspaces. Do not guess an API URL or use production as a fallback. Vercel's automatically triggered staging/feature Preview builds currently fail closed because the required Preview configuration has not been set. The GitHub `Dashboard checks` job independently passes with a safe fixture origin.
 
