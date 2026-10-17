@@ -1,5 +1,7 @@
 'use client';
 
+import { API_BASE_URL } from '@/lib/environment';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { listApiKeys, createApiKey, updateApiKey, deleteApiKey, getStats, getUsageAnalytics, ApiError, type ApiKey, type StatsResponse, type UsageStats } from '@/lib/api';
@@ -308,7 +310,7 @@ export default function DashboardPage() {
 
         {/* Cookie Management */}
         <div className="mb-6">
-          <CookieManagement adminKey={adminKey} apiUrl={process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'} />
+          <CookieManagement adminKey={adminKey} apiUrl={API_BASE_URL} />
         </div>
 
         {/* API Keys List */}

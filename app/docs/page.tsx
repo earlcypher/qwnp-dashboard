@@ -1,5 +1,7 @@
 'use client';
 
+import { API_BASE_URL } from '@/lib/environment';
+
 import { useRouter } from 'next/navigation';
 
 export default function DocsPage() {
@@ -44,7 +46,7 @@ export default function DocsPage() {
           <div className="card p-6">
             <h2 className="text-xl font-semibold text-gray-100 mb-4">Base URL</h2>
             <pre className="bg-[#0a0a0a] p-4 rounded border border-[#333] text-sm text-gray-300">
-{process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}
+{API_BASE_URL}
             </pre>
           </div>
 
@@ -178,7 +180,7 @@ data: [DONE]`}
               <div>
                 <p className="text-gray-300 mb-2 font-medium">cURL</p>
                 <pre className="bg-[#0a0a0a] p-4 rounded border border-[#333] text-sm text-gray-300 overflow-x-auto">
-{`curl ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/v1/chat/completions \\
+{`curl ${API_BASE_URL}/v1/chat/completions \\
   -H "Authorization: Bearer sk-your-api-key" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -195,7 +197,7 @@ data: [DONE]`}
 
 client = OpenAI(
     api_key="sk-your-api-key",
-    base_url="${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/v1"
+    base_url="${API_BASE_URL}/v1"
 )
 
 response = client.chat.completions.create(
@@ -214,7 +216,7 @@ print(response.choices[0].message.content)`}
 
 const client = new OpenAI({
   apiKey: 'sk-your-api-key',
-  baseURL: '${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/v1'
+  baseURL: '${API_BASE_URL}/v1'
 });
 
 const response = await client.chat.completions.create({

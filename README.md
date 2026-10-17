@@ -1,5 +1,7 @@
 # Qwen Proxy Dashboard
 
+**Environment workflow:** [Development / staging / production](ENVIRONMENTS.md). Production releases require explicit owner approval; staging is on-demand.
+
 A modern web dashboard for managing API keys for the Qwen Proxy server.
 
 **Current release:** see [RELEASE-NOTES-2026-10-17.md](RELEASE-NOTES-2026-10-17.md) for the published change set and operational limits. [FIXES-2026-10-17.md](FIXES-2026-10-17.md) preserves the earlier review record. Main-branch pushes may trigger deployment; rollout must be verified separately.
