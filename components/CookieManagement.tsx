@@ -330,8 +330,8 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
   return (
     <>
       <div className="card">
-      <div className="px-6 py-4 border-b border-[#263449]">
-        <div className="flex justify-between items-center">
+      <div className="px-6 py-4 border-b border-[#25272a]">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-lg font-medium text-gray-100">Qwen API Authentication</h2>
             <p className="text-sm text-gray-400 mt-1">
@@ -341,7 +341,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
           <div className="flex gap-3">
             <button
               onClick={() => setShowCookieGuide(true)}
-              className="px-4 py-2 border border-[#263449] text-gray-300 rounded text-sm font-medium hover:bg-[#152033] transition-colors duration-150"
+              className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
             >
               Cookie Guide
             </button>
@@ -379,8 +379,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
           if (tokenExp.expired) {
             return (
               <div className="bg-red-900/20 border border-red-800 text-red-300 px-4 py-3 rounded flex items-center gap-3">
-                <span className="text-2xl"></span>
-                <div className="flex-1">
+                                <div className="flex-1">
                   <div className="font-semibold">Token Expired</div>
                   <div className="text-sm text-red-400">
                     Your Qwen authentication token expired on {tokenExp.date}. Please capture fresh credentials.
@@ -391,8 +390,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
           } else if (tokenExp.daysLeft <= 3) {
             return (
               <div className="bg-red-900/20 border border-red-800 text-red-300 px-4 py-3 rounded flex items-center gap-3">
-                <span className="text-2xl"></span>
-                <div className="flex-1">
+                                <div className="flex-1">
                   <div className="font-semibold">Token Expiring Soon</div>
                   <div className="text-sm text-red-400">
                     Only {tokenExp.daysLeft} day{tokenExp.daysLeft !== 1 ? 's' : ''} left! Expires: {tokenExp.date}
@@ -403,8 +401,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
           } else if (tokenExp.daysLeft <= 7) {
             return (
               <div className="bg-yellow-900/20 border border-yellow-800 text-yellow-300 px-4 py-3 rounded flex items-center gap-3">
-                <span className="text-2xl"></span>
-                <div className="flex-1">
+                                <div className="flex-1">
                   <div className="font-semibold">Token Expiring</div>
                   <div className="text-sm text-yellow-400">
                     {tokenExp.daysLeft} days remaining. Expires: {tokenExp.date}
@@ -418,8 +415,8 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
 
         {/* Cookie Status Cards */}
         {status && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
               <div className="text-sm text-gray-400">Status</div>
               <div className="mt-2 flex items-center gap-2">
                 <span className={`inline-block w-2 h-2 rounded-full ${status.valid ? 'bg-green-500' : 'bg-red-500'}`}></span>
@@ -429,21 +426,21 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
               </div>
             </div>
 
-            <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+            <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
               <div className="text-sm text-gray-400">Has Token</div>
               <div className="mt-2 text-lg font-semibold text-gray-100">
                 {status.has_token ? 'Yes' : 'No'}
               </div>
             </div>
 
-            <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+            <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
               <div className="text-sm text-gray-400">Cookie Count</div>
               <div className="mt-2 text-lg font-semibold text-gray-100">
                 {status.cookie_count}
               </div>
             </div>
 
-            <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+            <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
               <div className="text-sm text-gray-400">Last Modified</div>
               <div className="mt-2 text-sm text-gray-100">
                 {status.last_modified ? new Date(status.last_modified).toLocaleDateString() : 'Unknown'}
@@ -480,7 +477,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
               setShowManualInput(false);
               setShowQuickPaste(false);
             }}
-            className="px-4 py-2 border border-[#263449] text-gray-300 rounded text-sm font-medium hover:bg-[#152033] transition-colors duration-150"
+            className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
           >
             {showFileUpload ? 'Cancel Upload' : 'Upload cookies.txt'}
           </button>
@@ -488,7 +485,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
 
         {/* Quick Paste Form */}
         {showQuickPaste && (
-          <div className="bg-[#0a1220] p-6 rounded-xl border border-green-800 space-y-4">
+          <div className="bg-[#0b0c0e] p-6 rounded-xl border border-green-800 space-y-4">
             <div className="mb-4">
               <h3 className="text-md font-medium text-gray-100 mb-2">Quick Paste</h3>
               <p className="text-sm text-gray-400">
@@ -506,7 +503,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
                 onChange={(e) => setFullCookieString(e.target.value)}
                 placeholder="token=eyJhbGc...; bx-umidtoken=xxx; other=values..."
                 rows={4}
-                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Works with DevTools cookie tables, Netscape exports, or a Cookie: header.
@@ -523,7 +520,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
                 onChange={(e) => setFullHeaders(e.target.value)}
                 placeholder="bx-ua: 234!5Rve...&#10;bx-umidtoken: xxx...&#10;user-agent: Mozilla/5.0..."
                 rows={6}
-                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Copy from DevTools to Network tab to Request Headers (entire section)
@@ -544,7 +541,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
                   setFullCookieString('');
                   setFullHeaders('');
                 }}
-                className="px-4 py-2 border border-[#263449] text-gray-300 rounded text-sm font-medium hover:bg-[#152033] transition-colors duration-150"
+                className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
               >
                 Clear
               </button>
@@ -562,7 +559,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
 
         {/* Manual Input Form */}
         {showManualInput && (
-          <div className="bg-[#0a1220] p-6 rounded-xl border border-indigo-800 space-y-4">
+          <div className="bg-[#0b0c0e] p-6 rounded-xl border border-indigo-800 space-y-4">
             <div className="mb-4">
               <h3 className="text-md font-medium text-gray-100 mb-2">Cookie Credentials</h3>
               <p className="text-sm text-gray-400">
@@ -580,7 +577,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
                 placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               {tokenExp && (
                 <div className={`text-xs mt-1 ${tokenExp.expired ? 'text-red-400' : 'text-green-400'}`}>
@@ -603,7 +600,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
                 onChange={(e) => setBxUa(e.target.value)}
                 placeholder="234!5RveKIpkeeP4DVsflwu+IuMItRRzqIvLlMR3Nmm..."
                 rows={4}
-                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               {bxUa && (
                 <div className="text-xs mt-1 text-gray-400">
@@ -625,7 +622,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
                 value={bxUmidtoken}
                 onChange={(e) => setBxUmidtoken(e.target.value)}
                 placeholder="T2gApOqwXfrS_qPdaTRShpgfFvvoyj4k6be6dFIPviL..."
-                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Unique machine identifier token (has fallback if not provided)
@@ -646,7 +643,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
                   setShowManualInput(false);
                   setError('');
                 }}
-                className="px-4 py-2 border border-[#263449] text-gray-300 rounded text-sm font-medium hover:bg-[#152033] transition-colors duration-150"
+                className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
               >
                 Cancel
               </button>
@@ -656,7 +653,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
 
         {/* File Upload Form */}
         {showFileUpload && (
-          <div className="bg-[#0a1220] p-6 rounded-xl border border-[#263449] space-y-4">
+          <div className="bg-[#0b0c0e] p-6 rounded-xl border border-[#25272a] space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Upload cookies.txt file

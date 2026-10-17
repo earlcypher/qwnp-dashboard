@@ -139,7 +139,7 @@ export default function TiersModal({ adminKey, onClose, onUpdate }: TiersModalPr
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 overflow-y-auto">
       <div className="card max-w-6xl w-full my-8">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#263449] flex justify-between items-center">
+        <div className="px-6 py-4 border-b border-[#25272a] flex justify-between items-center">
           <div>
             <h2 className="text-xl font-bold text-gray-100">Tier Management</h2>
             <p className="text-gray-400 text-sm mt-1">Manage API key tiers and features</p>
@@ -170,7 +170,7 @@ export default function TiersModal({ adminKey, onClose, onUpdate }: TiersModalPr
             {Object.entries(tierInfo).map(([tier, info]) => {
               const stats = tierStats[tier as keyof typeof tierStats];
               return (
-                <div key={tier} className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+                <div key={tier} className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                   <div className="flex justify-between items-start mb-3">
                     <h3 className={`text-md font-semibold ${info.color}`}>{info.name}</h3>
                     <button
@@ -194,7 +194,7 @@ export default function TiersModal({ adminKey, onClose, onUpdate }: TiersModalPr
                       <span className="text-gray-200 font-medium">{stats.totalUsage.toLocaleString()}</span>
                     </div>
                   </div>
-                  <div className="pt-3 border-t border-[#263449]">
+                  <div className="pt-3 border-t border-[#25272a]">
                     <p className="text-xs text-gray-500 mb-1">Features:</p>
                     <ul className="space-y-1">
                       {info.features.map((feature, i) => (
@@ -209,13 +209,13 @@ export default function TiersModal({ adminKey, onClose, onUpdate }: TiersModalPr
 
           {/* Bulk Actions */}
           {selectedKeys.size > 0 && (
-            <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449] mb-6">
+            <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] mb-6">
               <div className="flex items-center gap-4">
                 <span className="text-sm text-gray-300">{selectedKeys.size} key(s) selected</span>
                 <select
                   value={bulkTier}
                   onChange={(e) => setBulkTier(e.target.value as any)}
-                  className="px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded text-sm"
+                  className="px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded text-sm"
                 >
                   <option value="free">Move to Free</option>
                   <option value="premium">Move to Premium</option>
@@ -229,7 +229,7 @@ export default function TiersModal({ adminKey, onClose, onUpdate }: TiersModalPr
                 </button>
                 <button
                   onClick={() => setSelectedKeys(new Set())}
-                  className="px-4 py-2 border border-[#263449] text-gray-300 rounded text-sm hover:bg-[#152033]"
+                  className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm hover:bg-[#1d1e20]"
                 >
                   Clear Selection
                 </button>
@@ -244,15 +244,15 @@ export default function TiersModal({ adminKey, onClose, onUpdate }: TiersModalPr
               if (tierKeys.length === 0) return null;
 
               return (
-                <div key={tier} className="bg-[#070b13] rounded-xl border border-[#263449]">
-                  <div className="px-4 py-3 border-b border-[#263449]">
+                <div key={tier} className="bg-[#050607] rounded-xl border border-[#25272a]">
+                  <div className="px-4 py-3 border-b border-[#25272a]">
                     <h3 className={`text-md font-medium ${info.color}`}>
                       {info.name} Tier ({tierKeys.length})
                     </h3>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-[#333]">
-                      <thead className="bg-[#151515]">
+                    <table className="min-w-full divide-y divide-[#25272a]">
+                      <thead className="bg-[#141517]">
                         <tr>
                           <th className="px-4 py-2 text-left">
                             <input
@@ -265,7 +265,7 @@ export default function TiersModal({ adminKey, onClose, onUpdate }: TiersModalPr
                                   selectAllInTier(tier);
                                 }
                               }}
-                              className="w-4 h-4 text-indigo-600 bg-[#0d1523] border-[#263449] rounded"
+                              className="w-4 h-4 text-indigo-600 bg-[#0f1012] border-[#25272a] rounded"
                             />
                           </th>
                           <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase">Name</th>
@@ -274,15 +274,15 @@ export default function TiersModal({ adminKey, onClose, onUpdate }: TiersModalPr
                           <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase">Last Used</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#333]">
+                      <tbody className="divide-y divide-[#25272a]">
                         {tierKeys.map((key) => (
-                          <tr key={key.id} className="hover:bg-[#151515]">
+                          <tr key={key.id} className="hover:bg-[#141517]">
                             <td className="px-4 py-3">
                               <input
                                 type="checkbox"
                                 checked={selectedKeys.has(key.id)}
                                 onChange={() => toggleKeySelection(key.id)}
-                                className="w-4 h-4 text-indigo-600 bg-[#0d1523] border-[#263449] rounded"
+                                className="w-4 h-4 text-indigo-600 bg-[#0f1012] border-[#25272a] rounded"
                               />
                             </td>
                             <td className="px-4 py-3 text-sm font-medium text-gray-200">{key.name}</td>

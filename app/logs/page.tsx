@@ -80,14 +80,14 @@ export default function LogsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="card p-6 mb-6">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-100">Request Logs</h1>
               <p className="text-gray-400 text-sm mt-1">View all API requests and responses</p>
             </div>
             <button
               onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 border border-[#263449] text-gray-300 rounded-lg text-sm font-medium hover:bg-[#152033] transition-colors duration-150"
+              className="px-4 py-2 border border-[#25272a] text-gray-300 rounded-lg text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
             >
               Back to Dashboard
             </button>
@@ -102,7 +102,7 @@ export default function LogsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="">All Statuses</option>
                 <option value="200">Success (2xx)</option>
@@ -117,7 +117,7 @@ export default function LogsPage() {
               <select
                 value={limit}
                 onChange={(e) => setLimit(parseInt(e.target.value))}
-                className="w-full px-3 py-2 bg-[#0d1523] border border-[#263449] text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="25">25 logs</option>
                 <option value="50">50 logs</option>
@@ -146,8 +146,8 @@ export default function LogsPage() {
                 </div>
               </div>
             ) : (
-              <table className="min-w-full divide-y divide-[#333]">
-                <thead className="bg-[#151515]">
+              <table className="min-w-full divide-y divide-[#25272a]">
+                <thead className="bg-[#141517]">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Time
@@ -169,14 +169,14 @@ export default function LogsPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#333]">
+                <tbody className="divide-y divide-[#25272a]">
                   {logs.map((log) => (
-                    <tr key={log.id} className="hover:bg-[#151515] transition-colors duration-150">
+                    <tr key={log.id} className="hover:bg-[#141517] transition-colors duration-150">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                         {formatTime(log.created_at)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 py-1 text-xs font-medium rounded bg-[#152033] text-gray-300">
+                        <span className="px-2 py-1 text-xs font-medium rounded bg-[#1d1e20] text-gray-300">
                           {log.method}
                         </span>
                       </td>

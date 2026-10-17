@@ -14,73 +14,66 @@ interface UsageChartProps {
   height?: number;
 }
 
+const numberFormat = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
+
 export default function UsageChart({ data, height = 300 }: UsageChartProps) {
   if (!data || data.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-[300px] text-gray-500">
-        No data available
-      </div>
-    );
+    return <div className="flex h-[300px] items-center justify-center text-sm text-gray-500">No usage data yet</div>;
   }
 
-  // Format date for display (e.g., "Jan 15")
   const formattedData = data.map(item => ({
     ...item,
-    displayDate: new Date(item.date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric'
-    })
+    displayDate: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
   }));
 
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <LineChart data={formattedData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+      <LineChart data={formattedData} margin={{ top: 12, right: 12, left: -16, bottom: 4 }}>
+        <CartesianGrid vertical={false} stroke="#222427" strokeDasharray="3 6" />
         <XAxis
           dataKey="displayDate"
-          stroke="#888"
-          style={{ fontSize: '12px' }}
+          axisLine={false}
+          tickLine={false}
+          tick={{ fill: '#85868b', fontSize: 11 }}
+          tickMargin={12}
+          minTickGap={18}
         />
         <YAxis
-          stroke="#888"
-          style={{ fontSize: '12px' }}
+          axisLine={false}
+          tickLine={false}
+          tick={{ fill: '#85868b', fontSize: 11 }}
+          tickFormatter={(value: number) => numberFormat.format(value)}
+          width={48}
         />
         <Tooltip
-          contentStyle={{
-            backgroundColor: '#1a1a1a',
-            border: '1px solid #333',
-            borderRadius: '8px',
-            color: '#fff'
+          cursor={{ stroke: '#3a3c40', strokeDasharray: '4 4' }}
+          content={({ active, payload, label }) => {
+            if (!active || !payload?.length) return null;
+            return (
+              <div className="min-w-40 rounded-xl border border-[#2a2b2f] bg-[#111214] px-3.5 py-3 shadow-2xl shadow-black/50">
+                <p className="mb-2 text-xs font-medium text-gray-400">{label}</p>
+                <div className="space-y-1.5">
+                  {payload.map((item) => (
+                    <div key={String(item.dataKey)} className="flex items-center justify-between gap-5 text-xs">
+                      <span className="flex items-center gap-2 text-gray-300"><span className="h-2 w-2 rounded-full" style={{ backgroundColor: item.color }} />{item.name}</span>
+                      <span className="font-semibold tabular-nums text-white">{Number(item.value).toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
           }}
         />
         <Legend
-          wrapperStyle={{ fontSize: '12px', color: '#888' }}
+          verticalAlign="bottom"
+          align="left"
+          iconType="circle"
+          iconSize={7}
+          wrapperStyle={{ paddingTop: 12, fontSize: '11px', color: '#a0a1a6' }}
         />
-        <Line
-          type="monotone"
-          dataKey="total"
-          stroke="#6366f1"
-          strokeWidth={2}
-          name="Total Requests"
-          dot={{ fill: '#6366f1', r: 4 }}
-          activeDot={{ r: 6 }}
-        />
-        <Line
-          type="monotone"
-          dataKey="success"
-          stroke="#10b981"
-          strokeWidth={2}
-          name="Successful"
-          dot={{ fill: '#10b981', r: 4 }}
-        />
-        <Line
-          type="monotone"
-          dataKey="errors"
-          stroke="#ef4444"
-          strokeWidth={2}
-          name="Errors"
-          dot={{ fill: '#ef4444', r: 4 }}
-        />
+        <Line type="monotone" dataKey="total" name="Total" stroke="#a394ff" strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: '#a394ff', stroke: '#0e0f11', strokeWidth: 2 }} />
+        <Line type="monotone" dataKey="success" name="Successful" stroke="#41d6a3" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: '#41d6a3', stroke: '#0e0f11', strokeWidth: 2 }} />
+        <Line type="monotone" dataKey="errors" name="Errors" stroke="#ff707d" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: '#ff707d', stroke: '#0e0f11', strokeWidth: 2 }} />
       </LineChart>
     </ResponsiveContainer>
   );

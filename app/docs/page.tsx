@@ -19,7 +19,7 @@ export default function DocsPage() {
             </div>
             <button
               onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 border border-[#263449] text-gray-300 rounded text-sm font-medium hover:bg-[#152033] transition-colors duration-150"
+              className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
             >
               Back to Dashboard
             </button>
@@ -34,7 +34,7 @@ export default function DocsPage() {
             <p className="text-gray-300 mb-4">
               All API requests require authentication using an API key in the Authorization header:
             </p>
-            <pre className="bg-[#0a1220] p-5 rounded-xl border border-[#263449] text-sm text-gray-300 overflow-x-auto">
+            <pre className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] text-sm text-gray-300 overflow-x-auto">
 {`Authorization: Bearer sk-your-api-key-here`}
             </pre>
             <p className="text-gray-400 text-sm mt-3">
@@ -45,7 +45,7 @@ export default function DocsPage() {
           {/* Base URL */}
           <div className="card p-6">
             <h2 className="text-xl font-semibold text-gray-100 mb-4">Base URL</h2>
-            <pre className="bg-[#0a1220] p-5 rounded-xl border border-[#263449] text-sm text-gray-300">
+            <pre className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] text-sm text-gray-300">
 {API_BASE_URL}
             </pre>
           </div>
@@ -55,13 +55,13 @@ export default function DocsPage() {
             <h2 className="text-xl font-semibold text-gray-100 mb-4">Endpoints</h2>
 
             {/* List Models */}
-            <div className="mb-6 pb-6 border-b border-[#263449]">
+            <div className="mb-6 pb-6 border-b border-[#25272a]">
               <div className="flex items-center gap-3 mb-3">
                 <span className="px-2 py-1 bg-green-900/30 text-green-400 text-xs font-medium rounded">GET</span>
                 <code className="text-indigo-400">/v1/models</code>
               </div>
               <p className="text-gray-300 mb-3">List available Qwen models.</p>
-              <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+              <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                 <p className="text-xs text-gray-500 mb-2">Example Response:</p>
                 <pre className="text-sm text-gray-300 overflow-x-auto">
 {`{
@@ -86,7 +86,7 @@ export default function DocsPage() {
               <p className="text-gray-300 mb-3">Create a chat completion using Qwen models.</p>
 
               <div className="space-y-4">
-                <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+                <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                   <p className="text-xs text-gray-500 mb-2">Request Body:</p>
                   <pre className="text-sm text-gray-300 overflow-x-auto">
 {`{
@@ -101,7 +101,7 @@ export default function DocsPage() {
                   </pre>
                 </div>
 
-                <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+                <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                   <p className="text-xs text-gray-500 mb-2">Example Response (Non-streaming):</p>
                   <pre className="text-sm text-gray-300 overflow-x-auto">
 {`{
@@ -128,7 +128,7 @@ export default function DocsPage() {
                   </pre>
                 </div>
 
-                <div className="bg-[#0a1220] p-5 rounded-xl border border-[#263449]">
+                <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                   <p className="text-xs text-gray-500 mb-2">Streaming Response (stream: true):</p>
                   <pre className="text-sm text-gray-300 overflow-x-auto">
 {`data: {"choices":[{"delta":{"content":"Hello"}}]}
@@ -179,7 +179,7 @@ data: [DONE]`}
             <div className="space-y-4">
               <div>
                 <p className="text-gray-300 mb-2 font-medium">cURL</p>
-                <pre className="bg-[#0a1220] p-5 rounded-xl border border-[#263449] text-sm text-gray-300 overflow-x-auto">
+                <pre className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] text-sm text-gray-300 overflow-x-auto">
 {`curl ${API_BASE_URL}/v1/chat/completions \\
   -H "Authorization: Bearer sk-your-api-key" \\
   -H "Content-Type: application/json" \\
@@ -192,7 +192,7 @@ data: [DONE]`}
 
               <div>
                 <p className="text-gray-300 mb-2 font-medium">Python (OpenAI SDK)</p>
-                <pre className="bg-[#0a1220] p-5 rounded-xl border border-[#263449] text-sm text-gray-300 overflow-x-auto">
+                <pre className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] text-sm text-gray-300 overflow-x-auto">
 {`from openai import OpenAI
 
 client = OpenAI(
@@ -211,7 +211,7 @@ print(response.choices[0].message.content)`}
 
               <div>
                 <p className="text-gray-300 mb-2 font-medium">Node.js (OpenAI SDK)</p>
-                <pre className="bg-[#0a1220] p-5 rounded-xl border border-[#263449] text-sm text-gray-300 overflow-x-auto">
+                <pre className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] text-sm text-gray-300 overflow-x-auto">
 {`import OpenAI from 'openai';
 
 const client = new OpenAI({
@@ -266,7 +266,7 @@ console.log(response.choices[0].message.content);`}
             <h2 className="text-xl font-semibold text-gray-100 mb-4">Rate Limits by Tier (per instance; configurable)</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="border-b border-[#263449]">
+                <thead className="border-b border-[#25272a]">
                   <tr className="text-left">
                     <th className="pb-3 text-gray-400 font-medium">Tier</th>
                     <th className="pb-3 text-gray-400 font-medium">Requests/min</th>
@@ -274,7 +274,7 @@ console.log(response.choices[0].message.content);`}
                     <th className="pb-3 text-gray-400 font-medium">Features</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#333]">
+                <tbody className="divide-y divide-[#25272a]">
                   <tr>
                     <td className="py-3 text-gray-300">Free</td>
                     <td className="py-3 text-gray-400">20 (default)</td>
