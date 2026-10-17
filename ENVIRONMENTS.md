@@ -26,7 +26,7 @@ The staging backend is free/on-demand and is deliberately suspended when not in 
 
 Feature PR -> `staging` -> automated checks and planned QA -> explicit owner approval -> PR/merge to `main` -> separately verified production rollout.
 
-Public-repository main protection should require a PR and passing `Dashboard checks`. No self-review requirement is used for the solo owner. Passing CI is not the owner's approval and does not authorize a production release. The private backend has a separate plan limitation documented in its `ENVIRONMENTS.md`.
+Public-repository main protection now requires a PR and passing `Dashboard checks`, with administrator enforcement enabled. No self-review requirement is used for the solo owner. Passing CI is not the owner's approval and does not authorize a production release. The private backend has a separate plan limitation documented in its `ENVIRONMENTS.md`.
 
 ## CI and local checks
 
@@ -43,3 +43,13 @@ NEXT_TELEMETRY_DISABLED=1 npm run build
 ```
 
 CI uses pinned checkout/setup-node actions and Node 22, with no production secrets, a job timeout and concurrency cancellation. The pre-existing removed `next lint` command remains a documented limitation; type-check/build success is not a lint or browser E2E pass.
+
+## Current hosted setup status (2026-10-17)
+
+The staging source branch and GitHub CI are ready. **Hosted Preview is not configured or verified yet.** Render API creation cannot fetch the private backend repository, and no staging service is visible in the authenticated account's accessible workspaces. Do not guess an API URL or use production as a fallback. Vercel's automatically triggered staging/feature Preview builds currently fail closed because the required Preview configuration has not been set. The GitHub `Dashboard checks` job independently passes with a safe fixture origin.
+
+After obtaining the actual staging service ID/URL, set all three Preview-only public variables above and rebuild. Production variable scope and main are unchanged by this setup. A Preview URL alone does not prove backend availability.
+
+## Release and rollback
+
+Before any main merge or production deployment, obtain explicit owner approval and record the tested backend/dashboard SHAs. A production build must use Production-scoped API settings, not a promoted staging bundle. After the approved rollout, verify the production deployment and harmless authentication smoke tests. For an approved rollback, use only a previously verified **Production** deployment/build, never a Preview artifact; reconcile main via a checked revert PR rather than force-pushing. Backend deployment and database rollback have separate approval/compatibility requirements documented in the backend runbook.
