@@ -106,21 +106,21 @@ export default function TiersPage() {
       color: 'text-gray-400',
       bgColor: 'bg-gray-700/30',
       borderColor: 'border-gray-700',
-      features: ['10 requests/min', '1,000 requests/day', 'Basic models'],
+      features: ['20 requests/min (default)', 'No daily quota', 'All models'],
     },
     premium: {
       name: 'Premium',
       color: 'text-blue-400',
       bgColor: 'bg-blue-900/30',
       borderColor: 'border-blue-800',
-      features: ['60 requests/min', '10,000 requests/day', 'All models', 'Priority support'],
+      features: ['60 requests/min (default)', 'No daily quota', 'All models'],
     },
     enterprise: {
       name: 'Enterprise',
       color: 'text-purple-400',
       bgColor: 'bg-purple-900/30',
       borderColor: 'border-purple-800',
-      features: ['Unlimited requests', 'All features', 'Admin access', 'Custom SLA'],
+      features: ['120 requests/min (default)', 'No daily quota', 'All models', 'Admin access'],
     },
   };
 

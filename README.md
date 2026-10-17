@@ -2,6 +2,8 @@
 
 A modern web dashboard for managing API keys for the Qwen Proxy server.
 
+**Current release:** see [RELEASE-NOTES-2026-10-17.md](RELEASE-NOTES-2026-10-17.md) for the published change set and operational limits. [FIXES-2026-10-17.md](FIXES-2026-10-17.md) preserves the earlier review record. Main-branch pushes may trigger deployment; rollout must be verified separately.
+
 ## Features
 
 - 🔐 Secure admin authentication with enterprise-tier API keys
@@ -14,7 +16,7 @@ A modern web dashboard for managing API keys for the Qwen Proxy server.
 
 ## Prerequisites
 
-- Node.js 18+ (for running the dashboard)
+- Node.js 22+ (for running the dashboard)
 - Running Qwen Proxy server (either v1 or v2)
 - Enterprise-tier API key for admin access
 
@@ -52,7 +54,7 @@ NEXT_PUBLIC_API_URL=https://your-proxy-domain.com
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3001](http://localhost:3001) in your browser.
 
 ### 4. Build for Production
 
@@ -134,9 +136,15 @@ qwen-dashboard/
 └── README.md                 # This file
 ```
 
+## Rate limits and credential refresh
+
+Defaults: free 20, premium 60, enterprise 120 requests/minute, per API key and backend process. No daily quotas or tier-based model restrictions are enforced. Backend environment overrides may change these defaults; UI numbers are illustrative defaults, not a live policy fetch.
+
+Cookie/header uploads apply immediately. For environment-backed credentials, changes are runtime-only; update backend COOKIES_B64/HEADERS_B64 manually for restart persistence. Browser debug output no longer prints parsed credentials.
+
 ## Security Notes
 
-- Admin keys are stored in browser localStorage (client-side only)
+- Admin keys are stored in browser sessionStorage (client-side only)
 - Keys are transmitted over HTTPS in production
 - API keys are never logged or exposed in the UI after creation
 - Use enterprise-tier keys for admin access only
@@ -157,7 +165,8 @@ qwen-dashboard/
 npm run dev      # Start development server
 npm run build    # Build for production
 npm start        # Run production server
-npm run lint     # Run ESLint
+npm run typecheck # Run TypeScript checks
+# Legacy npm run lint uses removed `next lint`; ESLint is not configured.
 ```
 
 ### Environment Variables
@@ -189,7 +198,8 @@ docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=https://api.example.com qwen-dash
 
 ```bash
 npm run build
-# Deploy the ./out directory to any static host
+# Static export additionally requires output: 'export' in next.config.mjs.
+# The default build is a Next.js build, not an automatic ./out export.
 ```
 
 ## Troubleshooting
@@ -206,7 +216,7 @@ npm run build
 
 ### Build errors
 - Run `npm install` to ensure dependencies are up to date
-- Check Node.js version (requires 18+)
+- Check Node.js version (requires 22+)
 - Clear `.next` directory and rebuild
 
 ## License

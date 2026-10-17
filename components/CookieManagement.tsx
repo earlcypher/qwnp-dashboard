@@ -5,7 +5,7 @@ import CookieGuide from './CookieGuide';
 import { parseJWT, buildCookiesTxt, parseCookiesTxt, parseFullCookieString, parseFullHeaders } from '../lib/cookieUtils';
 
 interface CookieStatus {
-  source: 'environment' | 'file';
+  source: 'environment' | 'file' | 'runtime';
   exists: boolean;
   valid: boolean;
   cookie_count: number;
@@ -187,7 +187,12 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
         throw new Error(errorData.error?.message || 'Failed to upload headers');
       }
 
-      setSuccess(`✓ Credentials saved successfully! Both cookies and headers updated.`);
+      const cookiesResult = await cookiesResponse.json();
+      const headersResult = await headersResponse.json();
+      const runtimeOnly = !cookiesResult.data.persisted || !headersResult.data.persisted;
+      setSuccess(runtimeOnly
+        ? '✓ Credentials updated for this process. Update COOKIES_B64/HEADERS_B64 in your deployment settings to survive a restart.'
+        : '✓ Cookies and headers saved successfully.');
       setShowManualInput(false);
       await loadStatus();
     } catch (err) {
@@ -228,7 +233,9 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
       }
 
       const result = await response.json();
-      setSuccess(`✓ ${result.message} - ${result.data.cookie_count} cookies uploaded`);
+      setSuccess(result.data.persisted
+        ? `✓ ${result.data.cookie_count} cookies saved`
+        : '✓ Cookies updated for this process only. Update COOKIES_B64 in deployment settings before a restart.');
       setShowFileUpload(false);
       await loadStatus();
     } catch (err) {
@@ -257,34 +264,24 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
     try {
       // Parse cookies
       const parsedCookies = parseFullCookieString(fullCookieString);
-      console.log('🔍 Parsed Cookies:', parsedCookies);
 
       // Parse headers
       const parsedHeaders = parseFullHeaders(fullHeaders);
-      console.log('🔍 Parsed Headers:', parsedHeaders);
 
       // Auto-fill fields
       if (parsedCookies.token) {
-        console.log('✅ Setting token:', parsedCookies.token.substring(0, 50) + '...');
         setToken(parsedCookies.token);
-      } else {
-        console.log('❌ No token found in cookies');
       }
 
       if (parsedCookies.bxUmidtoken) {
-        console.log('✅ Setting bx-umidtoken from cookies');
         setBxUmidtoken(parsedCookies.bxUmidtoken);
       }
 
       if (parsedHeaders.bxUa) {
-        console.log('✅ Setting bx-ua from headers');
         setBxUa(parsedHeaders.bxUa);
-      } else {
-        console.log('❌ No bx-ua found in headers');
       }
 
       if (parsedHeaders.bxUmidtoken && !parsedCookies.bxUmidtoken) {
-        console.log('✅ Setting bx-umidtoken from headers');
         setBxUmidtoken(parsedHeaders.bxUmidtoken);
       }
 
@@ -435,7 +432,7 @@ export default function CookieManagement({ adminKey, apiUrl }: CookieManagementP
               <div className="mt-2 flex items-center gap-2">
                 <span className={`inline-block w-2 h-2 rounded-full ${status.valid ? 'bg-green-500' : 'bg-red-500'}`}></span>
                 <span className="text-lg font-semibold text-gray-100">
-                  {status.valid ? 'Valid' : 'Invalid'}
+                  {status.valid ? 'Loaded (not verified)' : 'Not loaded'}
                 </span>
               </div>
             </div>

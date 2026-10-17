@@ -259,7 +259,7 @@ console.log(response.choices[0].message.content);`}
 
           {/* Rate Limits */}
           <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
-            <h3 className="text-lg font-semibold text-gray-100 mb-3">Rate Limits by Tier</h3>
+            <h3 className="text-lg font-semibold text-gray-100 mb-3">Rate Limits by Tier (per instance; configurable)</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="border-b border-[#333]">
@@ -273,20 +273,20 @@ console.log(response.choices[0].message.content);`}
                 <tbody className="divide-y divide-[#333]">
                   <tr>
                     <td className="py-3 text-gray-300">Free</td>
-                    <td className="py-3 text-gray-400">10</td>
-                    <td className="py-3 text-gray-400">1,000</td>
-                    <td className="py-3 text-gray-400">Basic models</td>
+                    <td className="py-3 text-gray-400">20 (default)</td>
+                    <td className="py-3 text-gray-400">Not enforced</td>
+                    <td className="py-3 text-gray-400">All models</td>
                   </tr>
                   <tr>
                     <td className="py-3 text-gray-300">Premium</td>
-                    <td className="py-3 text-gray-400">60</td>
-                    <td className="py-3 text-gray-400">10,000</td>
-                    <td className="py-3 text-gray-400">All models, priority support</td>
+                    <td className="py-3 text-gray-400">60 (default)</td>
+                    <td className="py-3 text-gray-400">Not enforced</td>
+                    <td className="py-3 text-gray-400">All models</td>
                   </tr>
                   <tr>
                     <td className="py-3 text-gray-300">Enterprise</td>
-                    <td className="py-3 text-gray-400">Unlimited</td>
-                    <td className="py-3 text-gray-400">Unlimited</td>
+                    <td className="py-3 text-gray-400">120 (default)</td>
+                    <td className="py-3 text-gray-400">Not enforced</td>
                     <td className="py-3 text-gray-400">All features, admin access</td>
                   </tr>
                 </tbody>
