@@ -60,17 +60,14 @@ export default function DocsPage() {
                 <span className="px-2 py-1 bg-green-900/30 text-green-400 text-xs font-medium rounded">GET</span>
                 <code className="text-indigo-400">/v1/models</code>
               </div>
-              <p className="text-gray-300 mb-3">List available Qwen models.</p>
+              <p className="text-gray-300 mb-3">List the models currently available to your Qwen session. Use a returned ID in chat requests.</p>
               <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                 <p className="text-xs text-gray-500 mb-2">Example Response:</p>
                 <pre className="text-sm text-gray-300 overflow-x-auto">
 {`{
   "object": "list",
   "data": [
-    { "id": "qwen3.7-plus", "object": "model" },
-    { "id": "qwen-max", "object": "model" },
-    { "id": "qwen-turbo", "object": "model" },
-    { "id": "qwen-plus", "object": "model" }
+    { "id": "YOUR_MODEL_ID_FROM_V1_MODELS", "object": "model" }
   ]
 }`}
                 </pre>
@@ -90,7 +87,7 @@ export default function DocsPage() {
                   <p className="text-xs text-gray-500 mb-2">Request Body:</p>
                   <pre className="text-sm text-gray-300 overflow-x-auto">
 {`{
-  "model": "qwen3.7-plus",
+  "model": "YOUR_MODEL_ID_FROM_V1_MODELS",
   "messages": [
     { "role": "user", "content": "Hello!" }
   ],
@@ -108,7 +105,7 @@ export default function DocsPage() {
   "id": "chatcmpl-123",
   "object": "chat.completion",
   "created": 1677652288,
-  "model": "qwen3.7-plus",
+  "model": "YOUR_MODEL_ID_FROM_V1_MODELS",
   "choices": [
     {
       "index": 0,
@@ -147,7 +144,7 @@ data: [DONE]`}
               <div>
                 <code className="text-indigo-400">model</code>
                 <span className="text-red-400 ml-2">required</span>
-                <p className="text-gray-400 mt-1">ID of the model to use (e.g., "qwen3.7-plus")</p>
+                <p className="text-gray-400 mt-1">Use a current ID returned by GET /v1/models; the list can change over time.</p>
               </div>
               <div>
                 <code className="text-indigo-400">messages</code>
@@ -184,7 +181,7 @@ data: [DONE]`}
   -H "Authorization: Bearer sk-your-api-key" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "model": "qwen3.7-plus",
+    "model": "YOUR_MODEL_ID_FROM_V1_MODELS",
     "messages": [{"role": "user", "content": "Hello!"}]
   }'`}
                 </pre>
@@ -201,7 +198,7 @@ client = OpenAI(
 )
 
 response = client.chat.completions.create(
-    model="qwen3.7-plus",
+    model="YOUR_MODEL_ID_FROM_V1_MODELS",
     messages=[{"role": "user", "content": "Hello!"}]
 )
 
@@ -220,7 +217,7 @@ const client = new OpenAI({
 });
 
 const response = await client.chat.completions.create({
-  model: 'qwen3.7-plus',
+  model: 'YOUR_MODEL_ID_FROM_V1_MODELS',
   messages: [{ role: 'user', content: 'Hello!' }]
 });
 

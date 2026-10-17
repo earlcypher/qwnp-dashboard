@@ -4,6 +4,7 @@ import { API_BASE_URL } from '@/lib/environment';
 
 import { useState, useEffect } from 'react';
 import { usePlaygroundApiKey } from '@/lib/usePlaygroundApiKey';
+import { useAvailableModels } from '@/lib/useAvailableModels';
 import { useRouter } from 'next/navigation';
 
 interface Message {
@@ -14,7 +15,6 @@ interface Message {
 export default function PlaygroundPage() {
   const [adminKey, setAdminKey] = useState('');
   const [messages, setMessages] = useState<Message[]>([{ role: 'user', content: '' }]);
-  const [model, setModel] = useState('qwen3.7-plus');
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(2000);
   const [stream, setStream] = useState(false);
@@ -22,6 +22,7 @@ export default function PlaygroundPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { keys, selectedId, selectedKey, secret, loadingKeys, loadingSecret, error: keyError, selectKey } = usePlaygroundApiKey(adminKey);
+  const { models, model, setModel, loading: loadingModels, error: modelError, refresh: refreshModels } = useAvailableModels(adminKey);
   const router = useRouter();
 
   useEffect(() => {
@@ -35,14 +36,6 @@ export default function PlaygroundPage() {
 
   const apiUrl = API_BASE_URL;
 
-  const models = [
-    { id: 'qwen3.7-plus', name: 'Qwen 3.7 Plus' },
-    { id: 'qwen3.8-max', name: 'Qwen 3.8 Max' },
-    { id: 'qwen3.7-max', name: 'Qwen 3.7 Max' },
-    { id: 'qwen3.6-plus', name: 'Qwen 3.6 Plus' },
-    { id: 'qwen3.5-plus', name: 'Qwen 3.5 Plus' },
-    { id: 'qwen3.5-omni-plus', name: 'Qwen 3.5 Omni Plus' },
-  ];
 
   const addMessage = (role: 'user' | 'assistant') => {
     setMessages([...messages, { role, content: '' }]);
@@ -65,6 +58,7 @@ export default function PlaygroundPage() {
 
     try {
       if (!secret || !selectedKey) throw new Error('Select an active API key before sending a request.');
+      if (!model) throw new Error('No current Qwen model is available. Refresh the model list and try again.');
       const filteredMessages = messages.filter(m => m.content.trim());
 
       if (filteredMessages.length === 0) {
@@ -180,16 +174,22 @@ export default function PlaygroundPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Model</label>
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <label htmlFor="playground-model" className="block text-sm font-medium text-gray-300">Model</label>
+                    <button type="button" onClick={() => void refreshModels()} disabled={loadingModels} className="text-xs font-medium text-violet-300 transition-colors hover:text-violet-200 disabled:opacity-50">{loadingModels ? 'Updating…' : 'Refresh list'}</button>
+                  </div>
                   <select
+                    id="playground-model"
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={loadingModels || models.length === 0}
+                    className="input-field w-full px-3 py-2 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {models.map(m => (
-                      <option key={m.id} value={m.id}>{m.name}</option>
-                    ))}
+                    <option value="">{loadingModels ? 'Loading current Qwen models…' : 'Choose an available model'}</option>
+                    {models.map(item => <option key={item.id} value={item.id}>{item.name === item.id ? item.id : `${item.name} · ${item.id}`}</option>)}
                   </select>
+                  <p className="mt-2 text-xs text-gray-500">Loaded from Qwen when this Playground opens; server refresh is cached for up to 5 minutes.</p>
+                  {modelError && <p className="mt-2 text-sm text-amber-300">{modelError}</p>}
                 </div>
 
                 <div>
@@ -291,7 +291,7 @@ export default function PlaygroundPage() {
             <div className="flex gap-3">
               <button
                 onClick={handleSend}
-                disabled={loading || loadingSecret || !secret}
+                disabled={loading || loadingSecret || loadingModels || !secret || !model}
                 className="flex-1 px-4 py-3 bg-indigo-500 text-white rounded-xl font-semibold hover:bg-indigo-400 disabled:opacity-50 transition-colors duration-150"
               >
                 {loading ? 'Sending…' : 'Send request'}

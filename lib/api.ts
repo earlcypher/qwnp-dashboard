@@ -37,6 +37,11 @@ export interface StatsResponse {
   };
 }
 
+export interface AvailableModel {
+  id: string;
+  name: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
@@ -102,6 +107,19 @@ export async function createApiKey(
     throw new Error(error.error.message || 'Failed to create API key');
   }
 
+  return response.json();
+}
+
+/** Load the current upstream model list through the admin route (not proxy-key analytics). */
+export async function getAvailableModels(adminSession: string): Promise<ApiResponse<AvailableModel[]>> {
+  const response = await fetch(`${API_BASE_URL}/admin/models`, {
+    method: 'GET', cache: 'no-store',
+    headers: { Authorization: `Bearer ${adminSession}`, 'Content-Type': 'application/json' },
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    throw new ApiError(error?.error?.message || 'Could not load current Qwen models', response.status);
+  }
   return response.json();
 }
 
