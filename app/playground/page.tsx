@@ -1,5 +1,7 @@
 'use client';
 
+import { API_BASE_URL } from '@/lib/environment';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -29,7 +31,7 @@ export default function PlaygroundPage() {
     setAdminKey(savedKey);
   }, [router]);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const apiUrl = API_BASE_URL;
 
   const models = [
     { id: 'qwen3.7-plus', name: 'Qwen 3.7 Plus' },

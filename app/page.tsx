@@ -1,5 +1,7 @@
 'use client';
 
+import { API_BASE_URL } from '@/lib/environment';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -31,7 +33,7 @@ export default function LoginPage() {
 
     try {
       // Test the key by making a request to the stats endpoint
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const apiUrl = API_BASE_URL;
       const response = await fetch(`${apiUrl}/admin/stats`, {
         headers: {
           'Authorization': `Bearer ${adminKey}`,

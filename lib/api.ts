@@ -3,7 +3,7 @@
  */
 
 // API base URL - configurable via environment variable
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+import { API_BASE_URL } from './environment';
 
 export class ApiError extends Error {
   constructor(message: string, public status: number) {

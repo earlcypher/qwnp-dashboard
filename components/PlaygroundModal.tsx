@@ -1,5 +1,7 @@
 'use client';
 
+import { API_BASE_URL } from '@/lib/environment';
+
 import { useState, useEffect } from 'react';
 
 interface Message {
@@ -22,7 +24,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const apiUrl = API_BASE_URL;
 
   const models = [
     { id: 'qwen3.7-plus', name: 'Qwen 3.7 Plus' },
