@@ -1,6 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '@/lib/environment';
+
+import { useState } from 'react';
+import { usePlaygroundApiKey } from '@/lib/usePlaygroundApiKey';
+import { useAvailableModels } from '@/lib/useAvailableModels';
 
 interface Message {
   role: 'user' | 'assistant' | 'system';
@@ -14,24 +18,17 @@ interface PlaygroundModalProps {
 
 export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalProps) {
   const [messages, setMessages] = useState<Message[]>([{ role: 'user', content: '' }]);
-  const [model, setModel] = useState('qwen3.7-plus');
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(2000);
   const [stream, setStream] = useState(false);
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { keys, selectedId, selectedKey, secret, loadingKeys, loadingSecret, error: keyError, selectKey } = usePlaygroundApiKey(adminKey);
+  const { models, model, setModel, loading: loadingModels, error: modelError, refresh: refreshModels } = useAvailableModels(adminKey);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const apiUrl = API_BASE_URL;
 
-  const models = [
-    { id: 'qwen3.7-plus', name: 'Qwen 3.7 Plus' },
-    { id: 'qwen3.8-max', name: 'Qwen 3.8 Max' },
-    { id: 'qwen3.7-max', name: 'Qwen 3.7 Max' },
-    { id: 'qwen3.6-plus', name: 'Qwen 3.6 Plus' },
-    { id: 'qwen3.5-plus', name: 'Qwen 3.5 Plus' },
-    { id: 'qwen3.5-omni-plus', name: 'Qwen 3.5 Omni Plus' },
-  ];
 
   const addMessage = (role: 'user' | 'assistant') => {
     setMessages([...messages, { role, content: '' }]);
@@ -53,6 +50,8 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
     setResponse('');
 
     try {
+      if (!secret || !selectedKey) throw new Error('Select an active API key before sending a request.');
+      if (!model) throw new Error('No current Qwen model is available. Refresh the model list and try again.');
       const filteredMessages = messages.filter(m => m.content.trim());
 
       if (filteredMessages.length === 0) {
@@ -70,7 +69,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
       const res = await fetch(`${apiUrl}/v1/chat/completions`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${adminKey}`,
+          'Authorization': `Bearer ${secret}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
@@ -131,16 +130,17 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <div className="card max-w-7xl w-full my-8">
+      <div className="card max-h-[calc(100vh-2rem)] max-w-7xl w-full my-4 overflow-y-auto">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#333] flex justify-between items-center">
+        <div className="px-6 py-4 border-b border-[#25272a] flex justify-between items-center">
           <div>
             <h2 className="text-xl font-bold text-gray-100">API Playground</h2>
             <p className="text-gray-400 text-sm mt-1">Test the Qwen API interactively</p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-300 text-2xl leading-none"
+            aria-label="Close Playground"
+            className="text-gray-400 hover:text-white text-2xl leading-none rounded-lg p-2"
           >
             ×
           </button>
@@ -152,21 +152,38 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
             {/* Left: Request Builder */}
             <div className="space-y-6">
               {/* Model & Parameters */}
-              <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+              <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                 <h3 className="text-md font-medium text-gray-100 mb-4">Configuration</h3>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Model</label>
+                    <label htmlFor="playground-api-key" className="block text-sm font-medium text-gray-300 mb-2">API key</label>
+                    <select id="playground-api-key" value={selectedId} onChange={event => selectKey(event.target.value)} disabled={loadingKeys || loadingSecret} className="input-field w-full px-3 py-2">
+                      <option value="">{loadingKeys ? 'Loading active keys…' : 'Choose an active API key'}</option>
+                      {keys.map(key => <option key={key.id} value={key.id}>{key.name} · {key.tier} · {key.usage_count.toLocaleString()} requests</option>)}
+                    </select>
+                    <p className="mt-2 text-xs text-gray-500">Only the selected key is revealed to this view in memory. Playground calls consume that key’s quota and usage.</p>
+                    {keyError && <p className="mt-2 text-sm text-red-300">{keyError}</p>}
+                    {!loadingKeys && keys.length === 0 && !keyError && <p className="mt-2 text-sm text-amber-300">No active API keys are available.</p>}
+                  </div>
+
+                  <div>
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <label htmlFor="playground-model" className="block text-sm font-medium text-gray-300">Model</label>
+                      <button type="button" onClick={() => void refreshModels()} disabled={loadingModels} className="text-xs font-medium text-violet-300 transition-colors hover:text-violet-200 disabled:opacity-50">{loadingModels ? 'Updating…' : 'Refresh list'}</button>
+                    </div>
                     <select
+                      id="playground-model"
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      disabled={loadingModels || models.length === 0}
+                      className="input-field w-full px-3 py-2 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {models.map(m => (
-                        <option key={m.id} value={m.id}>{m.name}</option>
-                      ))}
+                      <option value="">{loadingModels ? 'Loading current Qwen models…' : 'Choose an available model'}</option>
+                      {models.map(item => <option key={item.id} value={item.id}>{item.name === item.id ? item.id : `${item.name} · ${item.id}`}</option>)}
                     </select>
+                    <p className="mt-2 text-xs text-gray-500">Loaded from Qwen when this Playground opens; server refresh is cached for up to 5 minutes.</p>
+                    {modelError && <p className="mt-2 text-sm text-amber-300">{modelError}</p>}
                   </div>
 
                   <div>
@@ -205,7 +222,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                       id="stream"
                       checked={stream}
                       onChange={(e) => setStream(e.target.checked)}
-                      className="w-4 h-4 text-indigo-600 bg-[#1a1a1a] border-[#333] rounded focus:ring-indigo-500"
+                      className="w-4 h-4 text-indigo-600 bg-[#0f1012] border-[#25272a] rounded focus:ring-indigo-500"
                     />
                     <label htmlFor="stream" className="ml-2 text-sm text-gray-300">
                       Stream response
@@ -215,19 +232,19 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
               </div>
 
               {/* Messages */}
-              <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+              <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-md font-medium text-gray-100">Messages</h3>
                   <div className="flex gap-2">
                     <button
                       onClick={() => addMessage('user')}
-                      className="px-3 py-1 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700 transition-colors"
+                      className="px-3 py-1 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-400 transition-colors duration-150"
                     >
                       + User
                     </button>
                     <button
                       onClick={() => addMessage('assistant')}
-                      className="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 transition-colors"
+                      className="px-3 py-1 bg-violet-600 text-white rounded text-sm hover:bg-violet-500 transition-colors duration-150"
                     >
                       + Assistant
                     </button>
@@ -236,7 +253,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
 
                 <div className="space-y-3 max-h-80 overflow-y-auto">
                   {messages.map((message, index) => (
-                    <div key={index} className="bg-[#1a1a1a] p-3 rounded border border-[#333]">
+                    <div key={index} className="bg-[#0f1012] p-3 rounded-xl border border-[#25272a]">
                       <div className="flex justify-between items-center mb-2">
                         <span className={`text-xs font-medium px-2 py-1 rounded ${
                           message.role === 'user'
@@ -247,9 +264,9 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                         </span>
                         <button
                           onClick={() => removeMessage(index)}
-                          className="text-gray-500 hover:text-red-400 text-sm"
+                          aria-label={`Remove ${message.role} message`} className="text-gray-500 hover:text-red-400 text-sm rounded-lg p-2"
                         >
-                          ✕
+                          ×
                         </button>
                       </div>
                       <textarea
@@ -257,7 +274,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                         onChange={(e) => updateMessage(index, e.target.value)}
                         placeholder={`Enter ${message.role} message...`}
                         rows={3}
-                        className="w-full px-3 py-2 bg-[#0a0a0a] border border-[#333] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-3 py-2 bg-[#050607] border border-[#25272a] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                     </div>
                   ))}
@@ -268,15 +285,15 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
               <div className="flex gap-3">
                 <button
                   onClick={handleSend}
-                  disabled={loading}
-                  className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                  disabled={loading || loadingSecret || loadingModels || !secret || !model}
+                  className="flex-1 px-4 py-3 bg-indigo-500 text-white rounded-xl font-semibold hover:bg-indigo-400 disabled:opacity-50 transition-colors duration-150"
                 >
-                  {loading ? 'Sending...' : '▶ Send Request'}
+                  {loading ? 'Sending…' : 'Send request'}
                 </button>
                 <button
                   onClick={handleClear}
                   disabled={loading}
-                  className="px-4 py-3 border border-[#333] text-gray-300 rounded font-medium hover:bg-[#252525] disabled:opacity-50 transition-colors"
+                  className="px-4 py-3 border border-[#25272a] text-gray-300 rounded-xl font-medium hover:bg-[#1d1e20] disabled:opacity-50 transition-colors duration-150"
                 >
                   Clear
                 </button>
@@ -285,7 +302,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
 
             {/* Right: Response */}
             <div className="space-y-6">
-              <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+              <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                 <h3 className="text-md font-medium text-gray-100 mb-4">Response</h3>
 
                 {error && (
@@ -302,7 +319,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                 )}
 
                 {(response || (loading && stream)) && (
-                  <div className="bg-[#1a1a1a] p-4 rounded border border-[#333] min-h-[500px] max-h-[500px] overflow-y-auto">
+                  <div className="bg-[#0f1012] p-4 rounded-xl border border-[#25272a] min-h-[500px] max-h-[500px] overflow-y-auto">
                     <pre className="text-sm text-gray-300 whitespace-pre-wrap font-sans">
                       {response || 'Streaming...'}
                     </pre>
@@ -310,7 +327,7 @@ export default function PlaygroundModal({ adminKey, onClose }: PlaygroundModalPr
                 )}
 
                 {!response && !loading && !error && (
-                  <div className="bg-[#1a1a1a] p-12 rounded border border-[#333] text-center">
+                  <div className="bg-[#0f1012] p-12 rounded-xl border border-[#25272a] text-center">
                     <div className="text-gray-500">Response will appear here</div>
                   </div>
                 )}

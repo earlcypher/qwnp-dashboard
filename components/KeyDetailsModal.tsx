@@ -96,14 +96,14 @@ export default function KeyDetailsModal({ apiKey, adminKey, onClose, onUpdate }:
     >
       <div className="card max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-slide-in">
         {/* Header */}
-        <div className="sticky top-0 bg-[#1a1a1a] border-b border-[#333] px-6 py-4 flex justify-between items-start">
+        <div className="sticky top-0 bg-[#0f1012] border-b border-[#25272a] px-6 py-4 flex justify-between items-start">
           <div className="flex-1">
             {isEditing ? (
               <input
                 type="text"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="text-xl font-semibold bg-[#0a0a0a] border border-[#333] text-gray-100 rounded px-2 py-1 w-full max-w-md"
+                className="text-xl font-semibold bg-[#050607] border border-[#25272a] text-gray-100 rounded px-2 py-1 w-full max-w-md"
               />
             ) : (
               <h2 className="text-xl font-semibold text-gray-100">{apiKey.name}</h2>
@@ -113,7 +113,7 @@ export default function KeyDetailsModal({ apiKey, adminKey, onClose, onUpdate }:
                 <select
                   value={editTier}
                   onChange={(e) => setEditTier(e.target.value as any)}
-                  className="text-sm px-2 py-1 bg-[#0a0a0a] border border-[#333] text-gray-100 rounded"
+                  className="text-sm px-2 py-1 bg-[#050607] border border-[#25272a] text-gray-100 rounded"
                 >
                   <option value="free">Free</option>
                   <option value="premium">Premium</option>
@@ -150,26 +150,26 @@ export default function KeyDetailsModal({ apiKey, adminKey, onClose, onUpdate }:
           )}
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
               <div className="text-sm text-gray-400">Total Requests</div>
               <div className="text-2xl font-semibold text-gray-100 mt-1">
                 {stats?.total_requests || 0}
               </div>
             </div>
-            <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+            <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
               <div className="text-sm text-gray-400">Success Rate</div>
               <div className="text-2xl font-semibold text-green-400 mt-1">
                 {successRate}%
               </div>
             </div>
-            <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+            <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
               <div className="text-sm text-gray-400">Avg Response</div>
               <div className="text-2xl font-semibold text-blue-400 mt-1">
                 {stats?.avg_response_time ? `${stats.avg_response_time.toFixed(0)}ms` : 'N/A'}
               </div>
             </div>
-            <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+            <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
               <div className="text-sm text-gray-400">Last Used</div>
               <div className="text-sm font-medium text-gray-300 mt-2">
                 {formatDate(apiKey.last_used_at)}
@@ -184,32 +184,29 @@ export default function KeyDetailsModal({ apiKey, adminKey, onClose, onUpdate }:
               <div className="text-gray-400 text-sm">Loading statistics...</div>
             </div>
           ) : stats && stats.requests_by_day && stats.requests_by_day.length > 0 ? (
-            <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+            <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
               <h3 className="text-sm font-medium text-gray-300 mb-4">Usage Over Time</h3>
               <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={stats.requests_by_day}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                  <XAxis dataKey="date" stroke="#666" style={{ fontSize: '12px' }} />
-                  <YAxis stroke="#666" style={{ fontSize: '12px' }} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
-                    labelStyle={{ color: '#999' }}
-                  />
-                  <Legend />
-                  <Line type="monotone" dataKey="total" stroke="#8b5cf6" name="Total" strokeWidth={2} />
-                  <Line type="monotone" dataKey="success" stroke="#10b981" name="Success" strokeWidth={2} />
-                  <Line type="monotone" dataKey="errors" stroke="#ef4444" name="Errors" strokeWidth={2} />
+                <LineChart data={stats.requests_by_day} margin={{ top: 8, right: 10, left: -18, bottom: 0 }}>
+                  <CartesianGrid vertical={false} strokeDasharray="3 6" stroke="#222427" />
+                  <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#85868b', fontSize: 10 }} tickMargin={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#85868b', fontSize: 10 }} width={38} />
+                  <Tooltip contentStyle={{ backgroundColor: '#111214', border: '1px solid #2a2b2f', borderRadius: 12, color: '#f4f4f5' }} />
+                  <Legend iconType="circle" iconSize={7} wrapperStyle={{ color: '#a0a1a6', fontSize: 10, paddingTop: 8 }} />
+                  <Line type="monotone" dataKey="total" stroke="#a394ff" name="Total" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="success" stroke="#41d6a3" name="Success" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="errors" stroke="#ff707d" name="Errors" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="bg-[#0a0a0a] p-8 rounded border border-[#333] text-center">
+            <div className="bg-[#0b0c0e] p-8 rounded-xl border border-[#25272a] text-center">
               <div className="text-gray-500">No usage data available</div>
             </div>
           )}
 
           {/* Key Details */}
-          <div className="bg-[#0a0a0a] p-4 rounded border border-[#333] space-y-2">
+          <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] space-y-2">
             <h3 className="text-sm font-medium text-gray-300 mb-3">Key Details</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
@@ -224,13 +221,13 @@ export default function KeyDetailsModal({ apiKey, adminKey, onClose, onUpdate }:
           </div>
 
           {/* Actions */}
-          <div className="flex flex-wrap gap-3 pt-4 border-t border-[#333]">
+          <div className="flex flex-wrap gap-3 pt-4 border-t border-[#25272a]">
             {isEditing ? (
               <>
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                  className="px-4 py-2 bg-indigo-500 text-white rounded text-sm font-medium hover:bg-indigo-400 disabled:opacity-50 transition-colors duration-150"
                 >
                   {saving ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -241,7 +238,7 @@ export default function KeyDetailsModal({ apiKey, adminKey, onClose, onUpdate }:
                     setEditTier(apiKey.tier);
                   }}
                   disabled={saving}
-                  className="px-4 py-2 border border-[#333] text-gray-300 rounded text-sm font-medium hover:bg-[#252525] disabled:opacity-50 transition-colors"
+                  className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] disabled:opacity-50 transition-colors duration-150"
                 >
                   Cancel
                 </button>
@@ -250,25 +247,25 @@ export default function KeyDetailsModal({ apiKey, adminKey, onClose, onUpdate }:
               <>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded text-sm font-medium hover:bg-indigo-700 transition-colors"
+                  className="px-4 py-2 bg-indigo-500 text-white rounded text-sm font-medium hover:bg-indigo-400 transition-colors duration-150"
                 >
                   Edit Key
                 </button>
                 <button
                   onClick={handleToggleActive}
-                  className="px-4 py-2 border border-[#333] text-gray-300 rounded text-sm font-medium hover:bg-[#252525] transition-colors"
+                  className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
                 >
                   {apiKey.is_active ? 'Deactivate' : 'Activate'}
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded text-sm font-medium hover:bg-red-700 transition-colors"
+                  className="px-4 py-2 bg-red-600 text-white rounded text-sm font-medium hover:bg-red-700 transition-colors duration-150"
                 >
                   Delete Key
                 </button>
                 <button
                   onClick={onClose}
-                  className="ml-auto px-4 py-2 border border-[#333] text-gray-300 rounded text-sm font-medium hover:bg-[#252525] transition-colors"
+                  className="ml-auto px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
                 >
                   Close
                 </button>

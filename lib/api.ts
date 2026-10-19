@@ -3,7 +3,7 @@
  */
 
 // API base URL - configurable via environment variable
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+import { API_BASE_URL } from './environment';
 
 export class ApiError extends Error {
   constructor(message: string, public status: number) {
@@ -35,6 +35,11 @@ export interface StatsResponse {
       enterprise: number;
     };
   };
+}
+
+export interface AvailableModel {
+  id: string;
+  name: string;
 }
 
 export interface ApiResponse<T> {
@@ -102,6 +107,32 @@ export async function createApiKey(
     throw new Error(error.error.message || 'Failed to create API key');
   }
 
+  return response.json();
+}
+
+/** Load the current upstream model list through the admin route (not proxy-key analytics). */
+export async function getAvailableModels(adminSession: string): Promise<ApiResponse<AvailableModel[]>> {
+  const response = await fetch(`${API_BASE_URL}/admin/models`, {
+    method: 'GET', cache: 'no-store',
+    headers: { Authorization: `Bearer ${adminSession}`, 'Content-Type': 'application/json' },
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    throw new ApiError(error?.error?.message || 'Could not load current Qwen models', response.status);
+  }
+  return response.json();
+}
+
+/** Reveal one selected active API key for the Playground only. The caller keeps it in memory. */
+export async function revealApiKey(adminSession: string, keyId: string): Promise<ApiResponse<{ key: string }>> {
+  const response = await fetch(`${API_BASE_URL}/admin/api-keys/${encodeURIComponent(keyId)}/reveal`, {
+    method: 'POST', cache: 'no-store',
+    headers: { Authorization: `Bearer ${adminSession}`, 'Content-Type': 'application/json' },
+  });
+  if (!response.ok) {
+    const error: ApiErrorResponse = await response.json().catch(() => ({ error: { message: 'Could not prepare selected key' } }));
+    throw new ApiError(error.error?.message || 'Could not prepare selected key', response.status);
+  }
   return response.json();
 }
 

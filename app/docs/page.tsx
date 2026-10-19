@@ -1,12 +1,14 @@
 'use client';
 
+import { API_BASE_URL } from '@/lib/environment';
+
 import { useRouter } from 'next/navigation';
 
 export default function DocsPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8">
+    <div className="min-h-screen bg-transparent py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="card p-6 mb-6">
@@ -17,9 +19,9 @@ export default function DocsPage() {
             </div>
             <button
               onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 border border-[#333] text-gray-300 rounded text-sm font-medium hover:bg-[#252525] transition-colors"
+              className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
             >
-              ← Back to Dashboard
+              Back to Dashboard
             </button>
           </div>
         </div>
@@ -32,7 +34,7 @@ export default function DocsPage() {
             <p className="text-gray-300 mb-4">
               All API requests require authentication using an API key in the Authorization header:
             </p>
-            <pre className="bg-[#0a0a0a] p-4 rounded border border-[#333] text-sm text-gray-300 overflow-x-auto">
+            <pre className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] text-sm text-gray-300 overflow-x-auto">
 {`Authorization: Bearer sk-your-api-key-here`}
             </pre>
             <p className="text-gray-400 text-sm mt-3">
@@ -43,8 +45,8 @@ export default function DocsPage() {
           {/* Base URL */}
           <div className="card p-6">
             <h2 className="text-xl font-semibold text-gray-100 mb-4">Base URL</h2>
-            <pre className="bg-[#0a0a0a] p-4 rounded border border-[#333] text-sm text-gray-300">
-{process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}
+            <pre className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] text-sm text-gray-300">
+{API_BASE_URL}
             </pre>
           </div>
 
@@ -53,22 +55,19 @@ export default function DocsPage() {
             <h2 className="text-xl font-semibold text-gray-100 mb-4">Endpoints</h2>
 
             {/* List Models */}
-            <div className="mb-6 pb-6 border-b border-[#333]">
+            <div className="mb-6 pb-6 border-b border-[#25272a]">
               <div className="flex items-center gap-3 mb-3">
                 <span className="px-2 py-1 bg-green-900/30 text-green-400 text-xs font-medium rounded">GET</span>
                 <code className="text-indigo-400">/v1/models</code>
               </div>
-              <p className="text-gray-300 mb-3">List available Qwen models.</p>
-              <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+              <p className="text-gray-300 mb-3">List the models currently available to your Qwen session. Use a returned ID in chat requests.</p>
+              <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                 <p className="text-xs text-gray-500 mb-2">Example Response:</p>
                 <pre className="text-sm text-gray-300 overflow-x-auto">
 {`{
   "object": "list",
   "data": [
-    { "id": "qwen3.7-plus", "object": "model" },
-    { "id": "qwen-max", "object": "model" },
-    { "id": "qwen-turbo", "object": "model" },
-    { "id": "qwen-plus", "object": "model" }
+    { "id": "YOUR_MODEL_ID_FROM_V1_MODELS", "object": "model" }
   ]
 }`}
                 </pre>
@@ -84,11 +83,11 @@ export default function DocsPage() {
               <p className="text-gray-300 mb-3">Create a chat completion using Qwen models.</p>
 
               <div className="space-y-4">
-                <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+                <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                   <p className="text-xs text-gray-500 mb-2">Request Body:</p>
                   <pre className="text-sm text-gray-300 overflow-x-auto">
 {`{
-  "model": "qwen3.7-plus",
+  "model": "YOUR_MODEL_ID_FROM_V1_MODELS",
   "messages": [
     { "role": "user", "content": "Hello!" }
   ],
@@ -99,14 +98,14 @@ export default function DocsPage() {
                   </pre>
                 </div>
 
-                <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+                <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                   <p className="text-xs text-gray-500 mb-2">Example Response (Non-streaming):</p>
                   <pre className="text-sm text-gray-300 overflow-x-auto">
 {`{
   "id": "chatcmpl-123",
   "object": "chat.completion",
   "created": 1677652288,
-  "model": "qwen3.7-plus",
+  "model": "YOUR_MODEL_ID_FROM_V1_MODELS",
   "choices": [
     {
       "index": 0,
@@ -126,7 +125,7 @@ export default function DocsPage() {
                   </pre>
                 </div>
 
-                <div className="bg-[#0a0a0a] p-4 rounded border border-[#333]">
+                <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a]">
                   <p className="text-xs text-gray-500 mb-2">Streaming Response (stream: true):</p>
                   <pre className="text-sm text-gray-300 overflow-x-auto">
 {`data: {"choices":[{"delta":{"content":"Hello"}}]}
@@ -145,7 +144,7 @@ data: [DONE]`}
               <div>
                 <code className="text-indigo-400">model</code>
                 <span className="text-red-400 ml-2">required</span>
-                <p className="text-gray-400 mt-1">ID of the model to use (e.g., "qwen3.7-plus")</p>
+                <p className="text-gray-400 mt-1">Use a current ID returned by GET /v1/models; the list can change over time.</p>
               </div>
               <div>
                 <code className="text-indigo-400">messages</code>
@@ -177,12 +176,12 @@ data: [DONE]`}
             <div className="space-y-4">
               <div>
                 <p className="text-gray-300 mb-2 font-medium">cURL</p>
-                <pre className="bg-[#0a0a0a] p-4 rounded border border-[#333] text-sm text-gray-300 overflow-x-auto">
-{`curl ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/v1/chat/completions \\
+                <pre className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] text-sm text-gray-300 overflow-x-auto">
+{`curl ${API_BASE_URL}/v1/chat/completions \\
   -H "Authorization: Bearer sk-your-api-key" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "model": "qwen3.7-plus",
+    "model": "YOUR_MODEL_ID_FROM_V1_MODELS",
     "messages": [{"role": "user", "content": "Hello!"}]
   }'`}
                 </pre>
@@ -190,16 +189,16 @@ data: [DONE]`}
 
               <div>
                 <p className="text-gray-300 mb-2 font-medium">Python (OpenAI SDK)</p>
-                <pre className="bg-[#0a0a0a] p-4 rounded border border-[#333] text-sm text-gray-300 overflow-x-auto">
+                <pre className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] text-sm text-gray-300 overflow-x-auto">
 {`from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-your-api-key",
-    base_url="${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/v1"
+    base_url="${API_BASE_URL}/v1"
 )
 
 response = client.chat.completions.create(
-    model="qwen3.7-plus",
+    model="YOUR_MODEL_ID_FROM_V1_MODELS",
     messages=[{"role": "user", "content": "Hello!"}]
 )
 
@@ -209,16 +208,16 @@ print(response.choices[0].message.content)`}
 
               <div>
                 <p className="text-gray-300 mb-2 font-medium">Node.js (OpenAI SDK)</p>
-                <pre className="bg-[#0a0a0a] p-4 rounded border border-[#333] text-sm text-gray-300 overflow-x-auto">
+                <pre className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] text-sm text-gray-300 overflow-x-auto">
 {`import OpenAI from 'openai';
 
 const client = new OpenAI({
   apiKey: 'sk-your-api-key',
-  baseURL: '${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/v1'
+  baseURL: '${API_BASE_URL}/v1'
 });
 
 const response = await client.chat.completions.create({
-  model: 'qwen3.7-plus',
+  model: 'YOUR_MODEL_ID_FROM_V1_MODELS',
   messages: [{ role: 'user', content: 'Hello!' }]
 });
 
@@ -264,7 +263,7 @@ console.log(response.choices[0].message.content);`}
             <h2 className="text-xl font-semibold text-gray-100 mb-4">Rate Limits by Tier (per instance; configurable)</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="border-b border-[#333]">
+                <thead className="border-b border-[#25272a]">
                   <tr className="text-left">
                     <th className="pb-3 text-gray-400 font-medium">Tier</th>
                     <th className="pb-3 text-gray-400 font-medium">Requests/min</th>
@@ -272,7 +271,7 @@ console.log(response.choices[0].message.content);`}
                     <th className="pb-3 text-gray-400 font-medium">Features</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#333]">
+                <tbody className="divide-y divide-[#25272a]">
                   <tr>
                     <td className="py-3 text-gray-300">Free</td>
                     <td className="py-3 text-gray-400">20 (default)</td>

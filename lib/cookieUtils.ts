@@ -114,3 +114,78 @@ export function parseFullHeaders(headersString: string): { bxUa?: string; bxUmid
 
   return result;
 }
+
+
+/** Convert a browser cookie-table export, Netscape jar, Cookie header, or raw pair list to Netscape format. */
+export function normalizeCookiePaste(content: string): string {
+  const rows: Array<[string, string]> = [];
+  const addPair = (name: string, value: string) => {
+    name = name.trim(); value = value.trim();
+    if (/^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/.test(name) && value && !/[\x00-\x1f\x7f;]/.test(value)) rows.push([name, value]);
+  };
+  for (const raw of content.split(/\r?\n/)) {
+    const line = raw.trim(); if (!line) continue;
+    if (/^#HttpOnly_/.test(line) || line.startsWith('#')) {
+      const cols = line.replace(/^#HttpOnly_/, '').split('\t');
+      if (cols.length >= 7 && /^(TRUE|FALSE)$/i.test(cols[1])) addPair(cols[5], cols[6]);
+      continue;
+    }
+    const cookieHeader = line.match(/^cookie\s*:\s*(.*)$/i);
+    if (cookieHeader) { for (const pair of cookieHeader[1].split(';')) { const i = pair.indexOf('='); if (i > 0) addPair(pair.slice(0,i), pair.slice(i+1)); } continue; }
+    const cols = line.split('\t');
+    if (cols[0]?.trim().toLowerCase() === 'name' && cols[1]?.trim().toLowerCase() === 'value') continue;
+    if (cols.length >= 7 && /^(TRUE|FALSE)$/i.test(cols[1]) && cols[2].startsWith('/')) { addPair(cols[5], cols[6]); continue; }
+    // Some browser clipboard exports flatten multiple TSV rows into one line.
+    let foundBrowserRows = false;
+    for (let i = 0; i + 4 < cols.length; i++) {
+      const domain = cols[i + 2].trim();
+      const expires = cols[i + 4].trim();
+      if ((domain.startsWith('.') || /^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/i.test(domain)) &&
+          cols[i + 3].trim().startsWith('/') && (/^\d{4}-\d{2}-\d{2}/.test(expires) || /^session$/i.test(expires))) {
+        const cookieName = cols[i].trim().split(/\s+/).pop() || cols[i];
+        addPair(cookieName, cols[i + 1]); foundBrowserRows = true;
+      }
+    }
+    if (foundBrowserRows) continue;
+    if (cols.length >= 2) { addPair(cols[0], cols[1]); continue; }
+    if (line.includes(';') && line.includes('=')) { for (const pair of line.split(';')) { const i = pair.indexOf('='); if (i > 0) addPair(pair.slice(0,i), pair.slice(i+1)); } }
+  }
+  // Handle browser table copies that have had every separator removed by the clipboard/chat surface.
+  if (rows.length === 0) {
+    const flat = content.replace(/\s+/g, '');
+    const knownNames = [
+      '*bl*uid', '_bl_uid', '_c_WBKFRo', '_gcl_au', 'qwen-thinking_mode',
+      'ssxmod_itna2', 'ssxmod_itna', 'refresh_token', 'bx-umidtoken', 'token', 'qwen-locale',
+      'qwen-theme', 'atpsida', 'xlly_s', 'acw_tc', 'cnaui', 'tfstk',
+      'x-ap', 'aui', 'cbc', 'cna', 'isg', 'sca'
+    ].sort((a,b) => b.length-a.length);
+    const domainNames = ['chat.qwen.ai', '.qwen.ai', '.alibaba.com'];
+    let cursor = 0;
+    while (cursor < flat.length) {
+      const matchedName = knownNames.find(name => flat.startsWith(name, cursor));
+      if (!matchedName) { rows.length = 0; break; }
+      const valueStart = cursor + matchedName.length;
+      let domainAt = -1;
+      for (const candidate of domainNames) { const at = flat.indexOf(candidate, valueStart); if (at >= 0 && (domainAt < 0 || at < domainAt)) { domainAt = at; } }
+      if (domainAt <= valueStart) { rows.length = 0; break; }
+      const value = flat.slice(valueStart, domainAt);
+      const tail = flat.slice(domainAt).match(/^(?:chat\.qwen\.ai|\.qwen\.ai|\.alibaba\.com)\/(?:Session|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z)\d+(?:✓|✔)*(?:None|Lax|Strict)?(?:Medium|Low|High)/);
+      if (!value || !tail) { rows.length = 0; break; }
+      const name = matchedName === '*bl*uid' ? '_bl_uid' : matchedName;
+      addPair(name, value);
+      cursor = domainAt + tail[0].length;
+    }
+  }
+  const unique = new Map(rows);
+  return ['# Netscape HTTP Cookie File', ...Array.from(unique, ([name,value]) => `.qwen.ai\tTRUE\t/\tTRUE\t0\t${name}\t${value}`)].join('\n');
+}
+
+/** Return cookie names only, so the UI can confirm extraction without displaying secrets. */
+export function getCookieExportNames(content: string): string[] {
+  return normalizeCookiePaste(content).split(/\r?\n/).filter(line => line && !line.startsWith('#')).map(line => line.split('\t')[5]).filter(Boolean);
+}
+
+/** Enable save for a pasted cookie export or a manual token; optional headers never block it. */
+export function canSaveCredentials(cookiePaste: string, token: string, uploading: boolean): boolean {
+  return !uploading && Boolean(cookiePaste.trim() || token.trim());
+}

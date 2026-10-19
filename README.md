@@ -1,5 +1,7 @@
 # Qwen Proxy Dashboard
 
+**New on staging:** [What's new and getting started](STAGING-GUIDE.md) | [Environment and release runbook](ENVIRONMENTS.md). Hosted staging is verified and on-demand; see [hosting and access](STAGING-HOSTING.md). Production releases require explicit owner approval.
+
 A modern web dashboard for managing API keys for the Qwen Proxy server.
 
 **Current release:** see [RELEASE-NOTES-2026-10-17.md](RELEASE-NOTES-2026-10-17.md) for the published change set and operational limits. [FIXES-2026-10-17.md](FIXES-2026-10-17.md) preserves the earlier review record. Main-branch pushes may trigger deployment; rollout must be verified separately.
@@ -67,10 +69,9 @@ npm start
 
 ### Login
 
-1. Navigate to the dashboard URL
-2. Enter your **enterprise-tier API key** (only enterprise keys have admin access)
-3. The key is validated against the Qwen Proxy server
-4. Upon successful login, you're redirected to the dashboard
+1. Navigate to the production dashboard URL. On first use, enter the one-time owner setup code and choose/confirm an admin password; later visits use that password. Staging continues to use its separate backend password.
+2. The backend stores only a salted password hash and issues a signed two-hour admin session; credentials are not persisted in browser storage.
+3. Upon successful setup or sign-in, you're redirected to the dashboard. API keys remain for proxy clients, not dashboard authentication.
 
 ### Dashboard Features
 
@@ -204,10 +205,10 @@ npm run build
 
 ## Troubleshooting
 
-### "Invalid API key" on login
-- Ensure you're using an **enterprise-tier** API key
-- Verify the API URL is correct in `.env.local`
-- Check that the Qwen Proxy server is running
+### First-time dashboard setup or login is unavailable
+- Confirm the production `dashboard_auth_state` migration is applied and Render has `ADMIN_BOOTSTRAP_TOKEN`, `ADMIN_SESSION_SECRET`, and the production dashboard origin in `ADMIN_ALLOWED_ORIGINS`
+- Use the one-time bootstrap code only on the first setup; remove it from Render after setup
+- Keep bootstrap/session settings out of Vercel `NEXT_PUBLIC_*` variables and source control
 
 ### "Failed to load data"
 - Verify network connectivity to the proxy server
@@ -225,5 +226,4 @@ MIT
 
 ## Related Projects
 
-- [qwen-proxy](../qwen-proxy) - Qwen Proxy server with API key management
-- [qwen-proxy-v2](../qwen-proxy-v2) - Simplified proxy with Supabase backend
+- [qwnp](https://github.com/earlcypher/qwnp) - Qwen Proxy backend with Supabase authentication and analytics (private repository; access required).

@@ -3,14 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --card: #1a1a1a;
-  --card-hover: #252525;
-  --border: #333333;
-  --input: #1a1a1a;
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
+  color-scheme: dark;
+  --background: #050607;
+  --foreground: #f1f1f2;
+  --card: #0e0f11;
+  --card-hover: #17181b;
+  --border: #25272a;
+  --input: #0f1012;
+  --primary: #9b8cff;
+  --primary-hover: #8472f5;
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
@@ -18,8 +19,12 @@
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  background: radial-gradient(ellipse at 8% -18%, rgba(102,83,255,.10), transparent 40%), radial-gradient(ellipse at 95% 0%, rgba(255,255,255,.025), transparent 25%), var(--background);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+  min-height: 100%;
 }
 
 @layer utilities {
@@ -30,23 +35,23 @@ body {
 
 @layer components {
   .card {
-    @apply bg-[#1a1a1a] border border-[#333] rounded-lg shadow-lg;
+    @apply bg-[#0e0f11] border border-[#25272a] rounded-2xl shadow-sm;
   }
 
   .card-hover:hover {
-    @apply bg-[#252525] border-[#444];
+    @apply bg-[#17181b] border-[#3a3c40] -translate-y-0.5;
   }
 
   .btn-primary {
-    @apply bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md transition-colors;
+    @apply bg-indigo-500 hover:bg-indigo-400 text-white font-semibold rounded-xl transition-colors duration-150;
   }
 
   .btn-secondary {
-    @apply bg-gray-700 hover:bg-gray-600 text-gray-200 font-medium rounded-md transition-colors;
+    @apply bg-[#17181b] hover:bg-[#222428] border border-[#25272a] text-gray-200 font-medium rounded-xl transition-colors duration-150;
   }
 
   .input-field {
-    @apply bg-[#1a1a1a] border border-[#333] text-gray-100 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+    @apply bg-[#0f1012] border border-[#25272a] text-gray-100 rounded-xl focus:ring-2 focus:ring-violet-400 focus:border-transparent;
   }
 
   .badge {
@@ -98,3 +103,27 @@ body {
 .animate-slide-in {
   animation: slide-in 0.3s ease-out;
 }
+
+
+@layer base {
+  :where(button, input, select, textarea) {
+    transition-property: color, background-color, border-color, box-shadow, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+  :where(button, input, select, textarea):focus-visible {
+    outline: 2px solid #9b8cff;
+    outline-offset: 2px;
+  }
+  ::selection { background: rgba(99, 102, 241, .35); color: #fff; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #050607; }
+::-webkit-scrollbar-thumb { background: #25272a; border: 2px solid #050607; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3c40; }

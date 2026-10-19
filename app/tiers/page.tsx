@@ -1,4 +1,5 @@
 'use client';
+import { readAdminSession } from '@/lib/adminSession';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -15,7 +16,7 @@ export default function TiersPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const savedKey = sessionStorage.getItem('adminKey');
+    const savedKey = readAdminSession();
     if (!savedKey) {
       router.push('/');
       return;
@@ -53,7 +54,7 @@ export default function TiersPage() {
         )
       );
 
-      setSuccess(`✓ Updated ${selectedKeys.size} key(s) to ${bulkTier} tier`);
+      setSuccess(`Updated ${selectedKeys.size} key(s) to ${bulkTier} tier`);
       setSelectedKeys(new Set());
       await loadKeys(adminKey);
     } catch (err) {
@@ -126,7 +127,7 @@ export default function TiersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
           <div className="text-gray-400">Loading tier data...</div>
@@ -136,7 +137,7 @@ export default function TiersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8">
+    <div className="min-h-screen bg-transparent py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="card p-6 mb-6">
@@ -147,9 +148,9 @@ export default function TiersPage() {
             </div>
             <button
               onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 border border-[#333] text-gray-300 rounded text-sm font-medium hover:bg-[#252525] transition-colors"
+              className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
             >
-              ← Back to Dashboard
+              Back to Dashboard
             </button>
           </div>
         </div>
@@ -195,7 +196,7 @@ export default function TiersPage() {
                     <span className="text-gray-200 font-medium">{stats.totalUsage.toLocaleString()}</span>
                   </div>
                 </div>
-                <div className="pt-4 border-t border-[#333]">
+                <div className="pt-4 border-t border-[#25272a]">
                   <p className="text-xs text-gray-500 mb-2">Features:</p>
                   <ul className="space-y-1">
                     {info.features.map((feature, i) => (
@@ -216,7 +217,7 @@ export default function TiersPage() {
               <select
                 value={bulkTier}
                 onChange={(e) => setBulkTier(e.target.value as any)}
-                className="px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded text-sm"
+                className="px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded text-sm"
               >
                 <option value="free">Move to Free</option>
                 <option value="premium">Move to Premium</option>
@@ -224,13 +225,13 @@ export default function TiersPage() {
               </select>
               <button
                 onClick={handleBulkUpdate}
-                className="px-4 py-2 bg-indigo-600 text-white rounded text-sm font-medium hover:bg-indigo-700"
+                className="px-4 py-2 bg-indigo-500 text-white rounded text-sm font-medium hover:bg-indigo-400"
               >
                 Apply
               </button>
               <button
                 onClick={() => setSelectedKeys(new Set())}
-                className="px-4 py-2 border border-[#333] text-gray-300 rounded text-sm hover:bg-[#252525]"
+                className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm hover:bg-[#1d1e20]"
               >
                 Clear Selection
               </button>
@@ -246,14 +247,14 @@ export default function TiersPage() {
 
             return (
               <div key={tier} className="card">
-                <div className="px-6 py-4 border-b border-[#333]">
+                <div className="px-6 py-4 border-b border-[#25272a]">
                   <h3 className={`text-lg font-medium ${info.color}`}>
                     {info.name} Tier ({tierKeys.length})
                   </h3>
                 </div>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-[#333]">
-                    <thead className="bg-[#151515]">
+                  <table className="min-w-full divide-y divide-[#25272a]">
+                    <thead className="bg-[#141517]">
                       <tr>
                         <th className="px-6 py-3 text-left">
                           <input
@@ -266,7 +267,7 @@ export default function TiersPage() {
                                 selectAllInTier(tier);
                               }
                             }}
-                            className="w-4 h-4 text-indigo-600 bg-[#1a1a1a] border-[#333] rounded"
+                            className="w-4 h-4 text-indigo-600 bg-[#0f1012] border-[#25272a] rounded"
                           />
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Name</th>
@@ -275,15 +276,15 @@ export default function TiersPage() {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Last Used</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#333]">
+                    <tbody className="divide-y divide-[#25272a]">
                       {tierKeys.map((key) => (
-                        <tr key={key.id} className="hover:bg-[#151515]">
+                        <tr key={key.id} className="hover:bg-[#141517]">
                           <td className="px-6 py-4">
                             <input
                               type="checkbox"
                               checked={selectedKeys.has(key.id)}
                               onChange={() => toggleKeySelection(key.id)}
-                              className="w-4 h-4 text-indigo-600 bg-[#1a1a1a] border-[#333] rounded"
+                              className="w-4 h-4 text-indigo-600 bg-[#0f1012] border-[#25272a] rounded"
                             />
                           </td>
                           <td className="px-6 py-4 text-sm font-medium text-gray-200">{key.name}</td>

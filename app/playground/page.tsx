@@ -1,6 +1,11 @@
 'use client';
+import { readAdminSession } from '@/lib/adminSession';
+
+import { API_BASE_URL } from '@/lib/environment';
 
 import { useState, useEffect } from 'react';
+import { usePlaygroundApiKey } from '@/lib/usePlaygroundApiKey';
+import { useAvailableModels } from '@/lib/useAvailableModels';
 import { useRouter } from 'next/navigation';
 
 interface Message {
@@ -11,17 +16,18 @@ interface Message {
 export default function PlaygroundPage() {
   const [adminKey, setAdminKey] = useState('');
   const [messages, setMessages] = useState<Message[]>([{ role: 'user', content: '' }]);
-  const [model, setModel] = useState('qwen3.7-plus');
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(2000);
   const [stream, setStream] = useState(false);
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { keys, selectedId, selectedKey, secret, loadingKeys, loadingSecret, error: keyError, selectKey } = usePlaygroundApiKey(adminKey);
+  const { models, model, setModel, loading: loadingModels, error: modelError, refresh: refreshModels } = useAvailableModels(adminKey);
   const router = useRouter();
 
   useEffect(() => {
-    const savedKey = sessionStorage.getItem('adminKey');
+    const savedKey = readAdminSession();
     if (!savedKey) {
       router.push('/');
       return;
@@ -29,16 +35,8 @@ export default function PlaygroundPage() {
     setAdminKey(savedKey);
   }, [router]);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const apiUrl = API_BASE_URL;
 
-  const models = [
-    { id: 'qwen3.7-plus', name: 'Qwen 3.7 Plus' },
-    { id: 'qwen3.8-max', name: 'Qwen 3.8 Max' },
-    { id: 'qwen3.7-max', name: 'Qwen 3.7 Max' },
-    { id: 'qwen3.6-plus', name: 'Qwen 3.6 Plus' },
-    { id: 'qwen3.5-plus', name: 'Qwen 3.5 Plus' },
-    { id: 'qwen3.5-omni-plus', name: 'Qwen 3.5 Omni Plus' },
-  ];
 
   const addMessage = (role: 'user' | 'assistant') => {
     setMessages([...messages, { role, content: '' }]);
@@ -60,6 +58,8 @@ export default function PlaygroundPage() {
     setResponse('');
 
     try {
+      if (!secret || !selectedKey) throw new Error('Select an active API key before sending a request.');
+      if (!model) throw new Error('No current Qwen model is available. Refresh the model list and try again.');
       const filteredMessages = messages.filter(m => m.content.trim());
 
       if (filteredMessages.length === 0) {
@@ -77,7 +77,7 @@ export default function PlaygroundPage() {
       const res = await fetch(`${apiUrl}/v1/chat/completions`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${adminKey}`,
+          'Authorization': `Bearer ${secret}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
@@ -137,7 +137,7 @@ export default function PlaygroundPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8">
+    <div className="min-h-screen bg-transparent py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="card p-6 mb-6">
@@ -148,9 +148,9 @@ export default function PlaygroundPage() {
             </div>
             <button
               onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 border border-[#333] text-gray-300 rounded text-sm font-medium hover:bg-[#252525] transition-colors"
+              className="px-4 py-2 border border-[#25272a] text-gray-300 rounded text-sm font-medium hover:bg-[#1d1e20] transition-colors duration-150"
             >
-              ← Back to Dashboard
+              Back to Dashboard
             </button>
           </div>
         </div>
@@ -164,16 +164,33 @@ export default function PlaygroundPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Model</label>
+                  <label htmlFor="playground-page-api-key" className="block text-sm font-medium text-gray-300 mb-2">API key</label>
+                  <select id="playground-page-api-key" value={selectedId} onChange={event => selectKey(event.target.value)} disabled={loadingKeys || loadingSecret} className="input-field w-full px-3 py-2">
+                    <option value="">{loadingKeys ? 'Loading active keys…' : 'Choose an active API key'}</option>
+                    {keys.map(key => <option key={key.id} value={key.id}>{key.name} · {key.tier} · {key.usage_count.toLocaleString()} requests</option>)}
+                  </select>
+                  <p className="mt-2 text-xs text-gray-500">Only the selected key is revealed to this view in memory. Playground calls consume that key’s quota and usage.</p>
+                  {keyError && <p className="mt-2 text-sm text-red-300">{keyError}</p>}
+                  {!loadingKeys && keys.length === 0 && !keyError && <p className="mt-2 text-sm text-amber-300">No active API keys are available.</p>}
+                </div>
+
+                <div>
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <label htmlFor="playground-model" className="block text-sm font-medium text-gray-300">Model</label>
+                    <button type="button" onClick={() => void refreshModels()} disabled={loadingModels} className="text-xs font-medium text-violet-300 transition-colors hover:text-violet-200 disabled:opacity-50">{loadingModels ? 'Updating…' : 'Refresh list'}</button>
+                  </div>
                   <select
+                    id="playground-model"
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={loadingModels || models.length === 0}
+                    className="input-field w-full px-3 py-2 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {models.map(m => (
-                      <option key={m.id} value={m.id}>{m.name}</option>
-                    ))}
+                    <option value="">{loadingModels ? 'Loading current Qwen models…' : 'Choose an available model'}</option>
+                    {models.map(item => <option key={item.id} value={item.id}>{item.name === item.id ? item.id : `${item.name} · ${item.id}`}</option>)}
                   </select>
+                  <p className="mt-2 text-xs text-gray-500">Loaded from Qwen when this Playground opens; server refresh is cached for up to 5 minutes.</p>
+                  {modelError && <p className="mt-2 text-sm text-amber-300">{modelError}</p>}
                 </div>
 
                 <div>
@@ -212,7 +229,7 @@ export default function PlaygroundPage() {
                     id="stream"
                     checked={stream}
                     onChange={(e) => setStream(e.target.checked)}
-                    className="w-4 h-4 text-indigo-600 bg-[#1a1a1a] border-[#333] rounded focus:ring-indigo-500"
+                    className="w-4 h-4 text-indigo-600 bg-[#0f1012] border-[#25272a] rounded focus:ring-indigo-500"
                   />
                   <label htmlFor="stream" className="ml-2 text-sm text-gray-300">
                     Stream response
@@ -223,18 +240,18 @@ export default function PlaygroundPage() {
 
             {/* Messages */}
             <div className="card p-6">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h3 className="text-lg font-medium text-gray-100">Messages</h3>
                 <div className="flex gap-2">
                   <button
                     onClick={() => addMessage('user')}
-                    className="px-3 py-1 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700 transition-colors"
+                    className="px-3 py-1 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-400 transition-colors duration-150"
                   >
                     + User
                   </button>
                   <button
                     onClick={() => addMessage('assistant')}
-                    className="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 transition-colors"
+                    className="px-3 py-1 bg-violet-600 text-white rounded text-sm hover:bg-violet-500 transition-colors duration-150"
                   >
                     + Assistant
                   </button>
@@ -243,7 +260,7 @@ export default function PlaygroundPage() {
 
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {messages.map((message, index) => (
-                  <div key={index} className="bg-[#0a0a0a] p-3 rounded border border-[#333]">
+                  <div key={index} className="bg-[#050607] p-3 rounded-xl border border-[#25272a]">
                     <div className="flex justify-between items-center mb-2">
                       <span className={`text-xs font-medium px-2 py-1 rounded ${
                         message.role === 'user'
@@ -256,7 +273,7 @@ export default function PlaygroundPage() {
                         onClick={() => removeMessage(index)}
                         className="text-gray-500 hover:text-red-400 text-sm"
                       >
-                        ✕
+                        ×
                       </button>
                     </div>
                     <textarea
@@ -264,7 +281,7 @@ export default function PlaygroundPage() {
                       onChange={(e) => updateMessage(index, e.target.value)}
                       placeholder={`Enter ${message.role} message...`}
                       rows={3}
-                      className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#333] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 bg-[#0f1012] border border-[#25272a] text-gray-100 rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
                 ))}
@@ -275,15 +292,15 @@ export default function PlaygroundPage() {
             <div className="flex gap-3">
               <button
                 onClick={handleSend}
-                disabled={loading}
-                className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                disabled={loading || loadingSecret || loadingModels || !secret || !model}
+                className="flex-1 px-4 py-3 bg-indigo-500 text-white rounded-xl font-semibold hover:bg-indigo-400 disabled:opacity-50 transition-colors duration-150"
               >
-                {loading ? 'Sending...' : '▶ Send Request'}
+                {loading ? 'Sending…' : 'Send request'}
               </button>
               <button
                 onClick={handleClear}
                 disabled={loading}
-                className="px-4 py-3 border border-[#333] text-gray-300 rounded font-medium hover:bg-[#252525] disabled:opacity-50 transition-colors"
+                className="px-4 py-3 border border-[#25272a] text-gray-300 rounded-xl font-medium hover:bg-[#1d1e20] disabled:opacity-50 transition-colors duration-150"
               >
                 Clear
               </button>
@@ -309,7 +326,7 @@ export default function PlaygroundPage() {
               )}
 
               {(response || (loading && stream)) && (
-                <div className="bg-[#0a0a0a] p-4 rounded border border-[#333] min-h-[400px]">
+                <div className="bg-[#0b0c0e] p-5 rounded-xl border border-[#25272a] min-h-[400px]">
                   <pre className="text-sm text-gray-300 whitespace-pre-wrap font-sans">
                     {response || 'Streaming...'}
                   </pre>
@@ -317,7 +334,7 @@ export default function PlaygroundPage() {
               )}
 
               {!response && !loading && !error && (
-                <div className="bg-[#0a0a0a] p-12 rounded border border-[#333] text-center">
+                <div className="bg-[#050607] p-12 rounded-xl border border-[#25272a] text-center">
                   <div className="text-gray-500">Response will appear here</div>
                 </div>
               )}
