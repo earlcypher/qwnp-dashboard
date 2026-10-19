@@ -25,9 +25,11 @@ The test database and proxy keys are separate. Qwen cookies/headers are shared w
 The verified staging backend uses Free/on-demand hosting and must be suspended outside scheduled QA. See [STAGING-HOSTING.md](STAGING-HOSTING.md) for access and its explicit resume/suspend workflow. A published Preview URL can therefore load while its API is unavailable. Resume the staging backend for testing and suspend it afterward; do not add keep-alive pings.
 
 
-## Production dashboard password
+## Production dashboard first-time setup
 
-Production dashboard access uses the backend-only Render settings `ADMIN_DASHBOARD_PASSWORD` (at least 16 characters), `ADMIN_SESSION_SECRET` (at least 32 random bytes), and `ADMIN_ALLOWED_ORIGINS=https://qwnp-dashboard-v2.vercel.app`. The UI receives only a two-hour signed session token in session-scoped browser storage; it never stores the password or a revealed proxy key. After the new dashboard is verified and the server-side `ADMIN_PASSWORD_ONLY=true` cutover is applied, production admin routes require that session; API keys remain for `/v1` proxy clients. Until then, the backend keeps the legacy enterprise-key admin path available during rollout. Never put these settings in Vercel `NEXT_PUBLIC_*` values or source control.
+Production first use is a claim-once setup page. Before rollout, the owner applies the production-only `scripts/create-dashboard-auth-state.sql` migration and sets `ADMIN_BOOTSTRAP_TOKEN` (at least 32 random bytes), `ADMIN_SESSION_SECRET` (at least 32 random bytes), and `ADMIN_ALLOWED_ORIGINS=https://qwnp-dashboard-v2.vercel.app` in Render. The setup page requires the one-time code and asks the owner to choose/confirm a password; the backend stores only a salted scrypt hash in the service-role-only `dashboard_auth_state` table. The raw password and bootstrap code are not persisted in the browser. Remove `ADMIN_BOOTSTRAP_TOKEN` from Render after setup; login then uses the stored hash and returns a two-hour session.
+
+Production admin routes retain the legacy enterprise-key path only until the dashboard password is verified and `ADMIN_PASSWORD_ONLY=true` is set. API keys remain for `/v1` proxy clients. Never put bootstrap/session secrets in Vercel `NEXT_PUBLIC_*` values or source control. Password recovery is an owner-only database reset; follow the backend runbook.
 
 ## Release workflow
 

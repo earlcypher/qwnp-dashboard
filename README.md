@@ -69,10 +69,9 @@ npm start
 
 ### Login
 
-1. Navigate to the dashboard URL
-2. Enter the dashboard password configured on the backend (not an API key)
-3. The backend issues a short-lived signed admin session; the password itself is not stored in the browser
-4. Upon successful login, you're redirected to the dashboard. API keys remain for proxy clients, not dashboard authentication.
+1. Navigate to the production dashboard URL. On first use, enter the one-time owner setup code and choose/confirm an admin password; later visits use that password. Staging continues to use its separate backend password.
+2. The backend stores only a salted password hash and issues a signed two-hour admin session; credentials are not persisted in browser storage.
+3. Upon successful setup or sign-in, you're redirected to the dashboard. API keys remain for proxy clients, not dashboard authentication.
 
 ### Dashboard Features
 
@@ -206,10 +205,10 @@ npm run build
 
 ## Troubleshooting
 
-### Dashboard login is unavailable or rejected
-- Confirm the backend has `ADMIN_DASHBOARD_PASSWORD` (16+ characters), `ADMIN_SESSION_SECRET` (32+ random bytes), and the production dashboard origin in `ADMIN_ALLOWED_ORIGINS`
-- Verify the entered password and API URL
-- Keep these server settings out of Vercel `NEXT_PUBLIC_*` variables and source control
+### First-time dashboard setup or login is unavailable
+- Confirm the production `dashboard_auth_state` migration is applied and Render has `ADMIN_BOOTSTRAP_TOKEN`, `ADMIN_SESSION_SECRET`, and the production dashboard origin in `ADMIN_ALLOWED_ORIGINS`
+- Use the one-time bootstrap code only on the first setup; remove it from Render after setup
+- Keep bootstrap/session settings out of Vercel `NEXT_PUBLIC_*` variables and source control
 
 ### "Failed to load data"
 - Verify network connectivity to the proxy server
