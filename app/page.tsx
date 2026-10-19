@@ -1,6 +1,7 @@
 'use client';
 
 import { API_BASE_URL } from '@/lib/environment';
+import { readAdminSession, saveAdminSession, clearLegacyAdminKey } from '@/lib/adminSession';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -13,10 +14,8 @@ export default function LoginPage() {
 
   // Check if already logged in
   useEffect(() => {
-    const savedKey = sessionStorage.getItem('adminKey');
-    if (savedKey) {
-      router.push('/dashboard');
-    }
+    clearLegacyAdminKey();
+    if (readAdminSession()) router.push('/dashboard');
   }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -40,7 +39,8 @@ export default function LoginPage() {
         setLoading(false); return;
       }
       const session = await response.json();
-      sessionStorage.setItem('adminKey', session.token);
+      if (typeof session.token !== 'string' || !session.token) throw new Error('The server did not issue a dashboard session.');
+      saveAdminSession(session.token);
       setPassword('');
       router.push('/dashboard');
     } catch (err) {
@@ -57,7 +57,7 @@ export default function LoginPage() {
             Qwen Proxy Dashboard
           </h2>
           <p className="mt-2 text-center text-sm text-gray-400">
-            Sign in to your private staging dashboard
+            Sign in to your private dashboard
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
@@ -108,7 +108,7 @@ export default function LoginPage() {
 
         <div className="text-center">
           <p className="text-xs text-gray-500">
-            Staging access · short-lived secure session
+            Private access · short-lived secure session
           </p>
         </div>
       </div>

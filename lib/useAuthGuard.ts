@@ -2,12 +2,14 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { readAdminSession, clearLegacyAdminKey } from './adminSession';
 
 export function useAuthGuard() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!sessionStorage.getItem('adminKey')) {
+    clearLegacyAdminKey();
+    if (!readAdminSession()) {
       router.replace('/');
     }
   }, [router]);

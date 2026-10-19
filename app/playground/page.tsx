@@ -1,4 +1,5 @@
 'use client';
+import { readAdminSession } from '@/lib/adminSession';
 
 import { API_BASE_URL } from '@/lib/environment';
 
@@ -26,7 +27,7 @@ export default function PlaygroundPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const savedKey = sessionStorage.getItem('adminKey');
+    const savedKey = readAdminSession();
     if (!savedKey) {
       router.push('/');
       return;

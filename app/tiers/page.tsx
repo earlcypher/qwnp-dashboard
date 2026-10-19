@@ -1,4 +1,5 @@
 'use client';
+import { readAdminSession } from '@/lib/adminSession';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -15,7 +16,7 @@ export default function TiersPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const savedKey = sessionStorage.getItem('adminKey');
+    const savedKey = readAdminSession();
     if (!savedKey) {
       router.push('/');
       return;

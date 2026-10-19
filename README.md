@@ -70,9 +70,9 @@ npm start
 ### Login
 
 1. Navigate to the dashboard URL
-2. Enter your **enterprise-tier API key** (only enterprise keys have admin access)
-3. The key is validated against the Qwen Proxy server
-4. Upon successful login, you're redirected to the dashboard
+2. Enter the dashboard password configured on the backend (not an API key)
+3. The backend issues a short-lived signed admin session; the password itself is not stored in the browser
+4. Upon successful login, you're redirected to the dashboard. API keys remain for proxy clients, not dashboard authentication.
 
 ### Dashboard Features
 
@@ -206,10 +206,10 @@ npm run build
 
 ## Troubleshooting
 
-### "Invalid API key" on login
-- Ensure you're using an **enterprise-tier** API key
-- Verify the API URL is correct in `.env.local`
-- Check that the Qwen Proxy server is running
+### Dashboard login is unavailable or rejected
+- Confirm the backend has `ADMIN_DASHBOARD_PASSWORD` (16+ characters), `ADMIN_SESSION_SECRET` (32+ random bytes), and the production dashboard origin in `ADMIN_ALLOWED_ORIGINS`
+- Verify the entered password and API URL
+- Keep these server settings out of Vercel `NEXT_PUBLIC_*` variables and source control
 
 ### "Failed to load data"
 - Verify network connectivity to the proxy server

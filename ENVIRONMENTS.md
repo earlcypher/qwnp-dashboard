@@ -18,11 +18,16 @@ The build refuses Preview without an explicit staging environment, rejects produ
 
 ## Credentials and availability
 
-Use only the newly generated staging enterprise proxy key to log into this UI. The key is in the backend's ignored owner-readable `.env.staging` on the MCP machine, not in this repository or a NEXT_PUBLIC variable. Backend database/service credentials never belong in the dashboard.
+The staging dashboard uses its staging-only `STAGING_ADMIN_PASSWORD` and `STAGING_SESSION_SECRET` backend settings. It does not use a proxy API key as the dashboard password. Keep these separate from production; backend database/service credentials never belong in the dashboard.
 
 The test database and proxy keys are separate. Qwen cookies/headers are shared with production by owner decision, so upstream limits and session invalidation are still shared. There are no automated live-chat CI tests.
 
 The verified staging backend uses Free/on-demand hosting and must be suspended outside scheduled QA. See [STAGING-HOSTING.md](STAGING-HOSTING.md) for access and its explicit resume/suspend workflow. A published Preview URL can therefore load while its API is unavailable. Resume the staging backend for testing and suspend it afterward; do not add keep-alive pings.
+
+
+## Production dashboard password
+
+Production dashboard access uses the backend-only Render settings `ADMIN_DASHBOARD_PASSWORD` (at least 16 characters), `ADMIN_SESSION_SECRET` (at least 32 random bytes), and `ADMIN_ALLOWED_ORIGINS=https://qwnp-dashboard-v2.vercel.app`. The UI receives only a two-hour signed session token in session-scoped browser storage; it never stores the password or a revealed proxy key. After the new dashboard is verified and the server-side `ADMIN_PASSWORD_ONLY=true` cutover is applied, production admin routes require that session; API keys remain for `/v1` proxy clients. Until then, the backend keeps the legacy enterprise-key admin path available during rollout. Never put these settings in Vercel `NEXT_PUBLIC_*` values or source control.
 
 ## Release workflow
 

@@ -1,4 +1,5 @@
 'use client';
+import { readAdminSession, clearAdminSession } from '@/lib/adminSession';
 
 import { API_BASE_URL } from '@/lib/environment';
 
@@ -39,7 +40,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const savedKey = sessionStorage.getItem('adminKey');
+    const savedKey = readAdminSession();
     if (!savedKey) {
       router.push('/');
       return;
@@ -101,7 +102,7 @@ export default function DashboardPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load data');
       if (err instanceof ApiError && err.status === 401) {
-        sessionStorage.removeItem('adminKey');
+        clearAdminSession();
         router.push('/');
       }
     } finally {
@@ -110,7 +111,7 @@ export default function DashboardPage() {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem('adminKey');
+    clearAdminSession();
     router.push('/');
   };
 
